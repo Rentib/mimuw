@@ -1,0 +1,83 @@
+\documentclass[12pt]{beamer}
+
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}                       % matma
+\usepackage{amsfonts,amsmath,amssymb,amsthm} % matma
+\usepackage{listings}                        % załączanie kodu źródłowego
+\usepackage{tikz}                            % rysowanie i grafy https://tikz.dev/tikz
+
+\title{Komitet strajkowy}
+\author{Stanisław Bitner}
+\date{listopad 2022}
+
+\usetheme{Warsaw}
+\usecolortheme{orchid}
+
+\setbeamertemplate{footline}[Warsaw]
+\setbeamertemplate{headline}{}
+\setbeamertemplate{page number in head/foot}[totalframenumber]
+\setbeamertemplate{navigation symbols}{}
+
+\lstset{basicstyle=\ttfamily\footnotesize,keywordstyle=\color{magenta},tabsize=2,escapeinside=||}
+
+\usetikzlibrary{positioning,overlay-beamer-styles,graphs,fit,shapes}
+\tikzset{}
+
+\AtBeginSection[] {
+  \begin{frame}{\secname}
+    \tableofcontents[currentsection,hideothersubsections,sectionstyle=hide]
+  \end{frame}
+}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\begin{frame}
+
+Definicje:
+\begin{itemize}
+  \pause\item
+    $p$ - niemalejący ciąg rang pracowników
+  \pause\item
+    $a_i$ - minimalna liczba pracowników w komitecie zawierającym $p_i$ i reprezentującego $p_1, ..., p_i$;
+  \pause\item
+    $b_i$ - liczba sposobów na uzyskanie optymalnego komitetu reprezentującego $p_1, ..., p_i$ zawierającego w sobie $p_i$.
+\end{itemize}
+
+\pause
+Oczywiście $a_0 = 0, b_0 = 1$.
+
+\end{frame}
+
+\begin{frame}
+
+Więcej definicji:
+\begin{itemize}
+  \pause\item
+    $k_i = \max\{ p_j | j < i \land p_j + k < p_i \}$ (największy pracownik \textbf{nie}pokrywany przez $p_i$)
+  \pause\item
+    $l_i = \min\{ j | p_j + k \ge k_i \}$ (indeks najmniejszego pracownika pokrywającego $k_i$)
+  \pause\item
+    $r_i = \max\{ j | p_j \le p_i - k \}$ (indeks największego pracownika \textbf{nie}kolidującego z $p_i$)
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+
+Oczywistym staje się, że
+$$a_i = \min\{ a_j | l_i \le j \le r_i \} + 1$$
+$$b_i = \sum_{j = l_i}^{r_i} [a_i = a_j + 1] \cdot b_j$$
+\pause
+
+$k_i, l_i, r_i$ można łatwo wyznaczyć wyszukiwaniem binarnym (lub w zamortyzowanym czasie liniowym).\\
+$a_i, b_i$ można wyznaczyć za pomocą drzewa przedziałowego lub zauważając pewną dodatkową zależność i używając sum prefiksowych, nie będę tego pokazywał, bo jest to bardziej skomplikowane.
+
+Złożoność czasowa: $O(\underbrace{n\log n}_{\text{sortowanie}} + \underbrace{n \log n}_{\text{dynamik}}) = O(n\log n)$.
+
+\end{frame}
+
+\end{document}
