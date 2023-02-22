@@ -1,0 +1,19 @@
+samochod osobowy
+autobus
+barka
+helikopter
+samolot pasażerski
+
+serwis zewnętrzny mówi jaka jest odległość od danego miejsca dla konkretnego pojazdu
+odl(miejsce 1, miejsce 2, sposób)
+sposób \in { ląd, woda, powietrze }
+
+odległość, szybkość pojazdu (czas pokonania odległości), zużycie na { milę morską / kilometr / godzinę }
+
+klasa pojazd {
+  podklasa { samochod osobowy, autobus, barka, helikopter, samolot pasażerski }
+    podklasa {
+      sposób { ląd, woda, powietrze }
+    }
+  odległość(miejsce 1, miejsce 2)
+}

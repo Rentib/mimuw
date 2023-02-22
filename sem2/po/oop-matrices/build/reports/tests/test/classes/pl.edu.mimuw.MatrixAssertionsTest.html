@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - MatrixAssertionsTest</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>MatrixAssertionsTest</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/pl.edu.mimuw.html">pl.edu.mimuw</a> &gt; MatrixAssertionsTest</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">53</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.737s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Method name</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">testFullAddThrowsOnNotMatchedSizes()</td>
+<td class="success">testFullAddThrowsOnNotMatchedSizes()</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[10] Type: identity
+Shape: 3 x 3
+</td>
+<td class="success">testFullGetThrowsTooBigRow(IDoubleMatrix)[10]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[11] Type: zero
+Shape: 3x2
+</td>
+<td class="success">testFullGetThrowsTooBigRow(IDoubleMatrix)[11]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[1] Type: full
+Shape: 2 x 3
+1.0 2.0 3.0 
+4.0 5.0 6.0 
+</td>
+<td class="success">testFullGetThrowsTooBigRow(IDoubleMatrix)[1]</td>
+<td class="success">0.032s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[2] Type: full
+Shape: 3 x 2
+1.0 2.0 
+3.0 4.0 
+5.0 6.0 
+</td>
+<td class="success">testFullGetThrowsTooBigRow(IDoubleMatrix)[2]</td>
+<td class="success">0.017s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[3] Type: diagonal
+Shape: 3 x 3
+7.0 0 0
+0 8.0 0
+0 0 9.0
+</td>
+<td class="success">testFullGetThrowsTooBigRow(IDoubleMatrix)[3]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[4] Type: antidiagonal
+Shape: 3 x 3
+0 0 10.0
+0 11.0 0
+12.0 0 0
+</td>
+<td class="success">testFullGetThrowsTooBigRow(IDoubleMatrix)[4]</td>
+<td class="success">0s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[5] Type: sparse
+Shape: 2 x 3
+1.0 0
+0 2.0 0 0 3.0 0 ... 0
+4.0 0
+0 5.0 
+0 0 6.0 0 ... 0
+</td>
+<td class="success">testFullGetThrowsTooBigRow(IDoubleMatrix)[5]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[6] Type: sparse
+Shape: 3 x 2
+1.0 0 2.0 0 0 
+3.0 
+0 4.0 
+0 0 
+5.0 
+0 6.0 0 0 
+</td>
+<td class="success">testFullGetThrowsTooBigRow(IDoubleMatrix)[6]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[7] Type: full
+Shape: 2 x 1
+18.0 
+19.0 
+</td>
+<td class="success">testFullGetThrowsTooBigRow(IDoubleMatrix)[7]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[8] Type: full
+Shape: 3 x 1
+15.0 
+16.0 
+17.0 
+</td>
+<td class="success">testFullGetThrowsTooBigRow(IDoubleMatrix)[8]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[9] Type: identity
+Shape: 2 x 2
+</td>
+<td class="success">testFullGetThrowsTooBigRow(IDoubleMatrix)[9]</td>
+<td class="success">0.008s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testFullInvalidConstructThrowsOnEmpty()</td>
+<td class="success">testFullInvalidConstructThrowsOnEmpty()</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testFullInvalidConstructThrowsOnNull()</td>
+<td class="success">testFullInvalidConstructThrowsOnNull()</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testFullTimesThrowsOnNotMatchedSizes()</td>
+<td class="success">testFullTimesThrowsOnNotMatchedSizes()</td>
+<td class="success">0.051s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[10] Type: identity
+Shape: 3 x 3
+</td>
+<td class="success">testGetThrowsOnNegativeColumn(IDoubleMatrix)[10]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[11] Type: zero
+Shape: 3x2
+</td>
+<td class="success">testGetThrowsOnNegativeColumn(IDoubleMatrix)[11]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[1] Type: full
+Shape: 2 x 3
+1.0 2.0 3.0 
+4.0 5.0 6.0 
+</td>
+<td class="success">testGetThrowsOnNegativeColumn(IDoubleMatrix)[1]</td>
+<td class="success">0.063s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[2] Type: full
+Shape: 3 x 2
+1.0 2.0 
+3.0 4.0 
+5.0 6.0 
+</td>
+<td class="success">testGetThrowsOnNegativeColumn(IDoubleMatrix)[2]</td>
+<td class="success">0.061s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[3] Type: diagonal
+Shape: 3 x 3
+7.0 0 0
+0 8.0 0
+0 0 9.0
+</td>
+<td class="success">testGetThrowsOnNegativeColumn(IDoubleMatrix)[3]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[4] Type: antidiagonal
+Shape: 3 x 3
+0 0 10.0
+0 11.0 0
+12.0 0 0
+</td>
+<td class="success">testGetThrowsOnNegativeColumn(IDoubleMatrix)[4]</td>
+<td class="success">0.006s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[5] Type: sparse
+Shape: 2 x 3
+1.0 0
+0 2.0 0 0 3.0 0 ... 0
+4.0 0
+0 5.0 
+0 0 6.0 0 ... 0
+</td>
+<td class="success">testGetThrowsOnNegativeColumn(IDoubleMatrix)[5]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[6] Type: sparse
+Shape: 3 x 2
+1.0 0 2.0 0 0 
+3.0 
+0 4.0 
+0 0 
+5.0 
+0 6.0 0 0 
+</td>
+<td class="success">testGetThrowsOnNegativeColumn(IDoubleMatrix)[6]</td>
+<td class="success">0.007s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[7] Type: full
+Shape: 2 x 1
+18.0 
+19.0 
+</td>
+<td class="success">testGetThrowsOnNegativeColumn(IDoubleMatrix)[7]</td>
+<td class="success">0.004s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[8] Type: full
+Shape: 3 x 1
+15.0 
+16.0 
+17.0 
+</td>
+<td class="success">testGetThrowsOnNegativeColumn(IDoubleMatrix)[8]</td>
+<td class="success">0.011s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[9] Type: identity
+Shape: 2 x 2
+</td>
+<td class="success">testGetThrowsOnNegativeColumn(IDoubleMatrix)[9]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[10] Type: identity
+Shape: 3 x 3
+</td>
+<td class="success">testGetThrowsOnNegativeRow(IDoubleMatrix)[10]</td>
+<td class="success">0.011s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[11] Type: zero
+Shape: 3x2
+</td>
+<td class="success">testGetThrowsOnNegativeRow(IDoubleMatrix)[11]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[1] Type: full
+Shape: 2 x 3
+1.0 2.0 3.0 
+4.0 5.0 6.0 
+</td>
+<td class="success">testGetThrowsOnNegativeRow(IDoubleMatrix)[1]</td>
+<td class="success">0.059s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[2] Type: full
+Shape: 3 x 2
+1.0 2.0 
+3.0 4.0 
+5.0 6.0 
+</td>
+<td class="success">testGetThrowsOnNegativeRow(IDoubleMatrix)[2]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[3] Type: diagonal
+Shape: 3 x 3
+7.0 0 0
+0 8.0 0
+0 0 9.0
+</td>
+<td class="success">testGetThrowsOnNegativeRow(IDoubleMatrix)[3]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[4] Type: antidiagonal
+Shape: 3 x 3
+0 0 10.0
+0 11.0 0
+12.0 0 0
+</td>
+<td class="success">testGetThrowsOnNegativeRow(IDoubleMatrix)[4]</td>
+<td class="success">0.006s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[5] Type: sparse
+Shape: 2 x 3
+1.0 0
+0 2.0 0 0 3.0 0 ... 0
+4.0 0
+0 5.0 
+0 0 6.0 0 ... 0
+</td>
+<td class="success">testGetThrowsOnNegativeRow(IDoubleMatrix)[5]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[6] Type: sparse
+Shape: 3 x 2
+1.0 0 2.0 0 0 
+3.0 
+0 4.0 
+0 0 
+5.0 
+0 6.0 0 0 
+</td>
+<td class="success">testGetThrowsOnNegativeRow(IDoubleMatrix)[6]</td>
+<td class="success">0.005s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[7] Type: full
+Shape: 2 x 1
+18.0 
+19.0 
+</td>
+<td class="success">testGetThrowsOnNegativeRow(IDoubleMatrix)[7]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[8] Type: full
+Shape: 3 x 1
+15.0 
+16.0 
+17.0 
+</td>
+<td class="success">testGetThrowsOnNegativeRow(IDoubleMatrix)[8]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[9] Type: identity
+Shape: 2 x 2
+</td>
+<td class="success">testGetThrowsOnNegativeRow(IDoubleMatrix)[9]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[10] Type: identity
+Shape: 3 x 3
+</td>
+<td class="success">testGetThrowsOnTooBigColumn(IDoubleMatrix)[10]</td>
+<td class="success">0.029s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[11] Type: zero
+Shape: 3x2
+</td>
+<td class="success">testGetThrowsOnTooBigColumn(IDoubleMatrix)[11]</td>
+<td class="success">0s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[1] Type: full
+Shape: 2 x 3
+1.0 2.0 3.0 
+4.0 5.0 6.0 
+</td>
+<td class="success">testGetThrowsOnTooBigColumn(IDoubleMatrix)[1]</td>
+<td class="success">0.072s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[2] Type: full
+Shape: 3 x 2
+1.0 2.0 
+3.0 4.0 
+5.0 6.0 
+</td>
+<td class="success">testGetThrowsOnTooBigColumn(IDoubleMatrix)[2]</td>
+<td class="success">0.022s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[3] Type: diagonal
+Shape: 3 x 3
+7.0 0 0
+0 8.0 0
+0 0 9.0
+</td>
+<td class="success">testGetThrowsOnTooBigColumn(IDoubleMatrix)[3]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[4] Type: antidiagonal
+Shape: 3 x 3
+0 0 10.0
+0 11.0 0
+12.0 0 0
+</td>
+<td class="success">testGetThrowsOnTooBigColumn(IDoubleMatrix)[4]</td>
+<td class="success">0.002s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[5] Type: sparse
+Shape: 2 x 3
+1.0 0
+0 2.0 0 0 3.0 0 ... 0
+4.0 0
+0 5.0 
+0 0 6.0 0 ... 0
+</td>
+<td class="success">testGetThrowsOnTooBigColumn(IDoubleMatrix)[5]</td>
+<td class="success">0.002s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[6] Type: sparse
+Shape: 3 x 2
+1.0 0 2.0 0 0 
+3.0 
+0 4.0 
+0 0 
+5.0 
+0 6.0 0 0 
+</td>
+<td class="success">testGetThrowsOnTooBigColumn(IDoubleMatrix)[6]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[7] Type: full
+Shape: 2 x 1
+18.0 
+19.0 
+</td>
+<td class="success">testGetThrowsOnTooBigColumn(IDoubleMatrix)[7]</td>
+<td class="success">0.028s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[8] Type: full
+Shape: 3 x 1
+15.0 
+16.0 
+17.0 
+</td>
+<td class="success">testGetThrowsOnTooBigColumn(IDoubleMatrix)[8]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">[9] Type: identity
+Shape: 2 x 2
+</td>
+<td class="success">testGetThrowsOnTooBigColumn(IDoubleMatrix)[9]</td>
+<td class="success">0.001s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testInvalidConstructThrowsOnDifferentSizes()</td>
+<td class="success">testInvalidConstructThrowsOnDifferentSizes()</td>
+<td class="success">0.003s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testInvalidConstructThrowsOnOutboundIndices()</td>
+<td class="success">testInvalidConstructThrowsOnOutboundIndices()</td>
+<td class="success">0.053s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testInvalidConstructThrowsOnOutboundNegativeIndices()</td>
+<td class="success">testInvalidConstructThrowsOnOutboundNegativeIndices()</td>
+<td class="success">0.054s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testSparseAddThrowsOnNotMatchedSizes()</td>
+<td class="success">testSparseAddThrowsOnNotMatchedSizes()</td>
+<td class="success">0.055s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">testSparseTimesThrowsOnNotMatchedSizes()</td>
+<td class="success">testSparseTimesThrowsOnNotMatchedSizes()</td>
+<td class="success">0.050s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 7.2</a> at May 17, 2022, 10:42:41 PM</p>
+</div>
+</div>
+</body>
+</html>

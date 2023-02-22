@@ -1,0 +1,13 @@
+/**
+\mainpage Dokumentacja zadania telefony
+
+### Treść zadania
+
+Uwaga: aktualna treść zadania znajduje się w [Moodle](https://moodle.mimuw.edu.pl).
+
+### Opis programu
+
+Tegoroczne duże zadanie polega na zaimplementowaniu operacji na numerach telefonów.
+Do wyznaczania i tworzenia przekierowań zostało użyte [drzewo trie](https://pl.wikipedia.org/wiki/Drzewo_trie).
+
+*/

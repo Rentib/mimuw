@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="pl.edu.mimuw.MatrixBinaryOperationTest" tests="74" skipped="0" failures="0" errors="0" timestamp="2022-05-17T20:42:41" hostname="arch" time="0.275">
+  <properties/>
+  <testcase name="testMinusSparseMatrices()" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.095"/>
+  <testcase name="[1] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;, Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.056"/>
+  <testcase name="[1] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;, Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.056"/>
+  <testcase name="[3] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;, Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.002"/>
+  <testcase name="[9] Type: identity&#10;Shape: 2 x 2&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.064"/>
+  <testcase name="[2] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;, Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.002"/>
+  <testcase name="[2] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;, Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.067"/>
+  <testcase name="[9] Type: identity&#10;Shape: 2 x 2&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.065"/>
+  <testcase name="[4] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;, Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.01"/>
+  <testcase name="[10] Type: identity&#10;Shape: 3 x 3&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[4] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;, Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.006"/>
+  <testcase name="[10] Type: identity&#10;Shape: 3 x 3&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.005"/>
+  <testcase name="[9] Type: identity&#10;Shape: 2 x 2&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.084"/>
+  <testcase name="[1] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;, Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[3] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;, Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.004"/>
+  <testcase name="[9] Type: identity&#10;Shape: 2 x 2&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.087"/>
+  <testcase name="[4] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;, Type: sparse&#10;Shape: 3 x 2&#10;1.0 0 2.0 0 0 &#10;3.0 &#10;0 4.0 &#10;0 0 &#10;5.0 &#10;0 6.0 0 0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.052"/>
+  <testcase name="[10] Type: identity&#10;Shape: 3 x 3&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[10] Type: identity&#10;Shape: 3 x 3&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[2] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;, Type: sparse&#10;Shape: 3 x 2&#10;1.0 0 2.0 0 0 &#10;3.0 &#10;0 4.0 &#10;0 0 &#10;5.0 &#10;0 6.0 0 0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.002"/>
+  <testcase name="[2] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;, Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[4] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;, Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[3] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;, Type: full&#10;Shape: 3 x 2&#10;1.0 2.0 &#10;3.0 4.0 &#10;5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="testPlusSparseMatrices()" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[3] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;, Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.021"/>
+  <testcase name="[1] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;, Type: full&#10;Shape: 3 x 2&#10;1.0 2.0 &#10;3.0 4.0 &#10;5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.021"/>
+  <testcase name="[8] Type: full&#10;Shape: 3 x 1&#10;15.0 &#10;16.0 &#10;17.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.01"/>
+  <testcase name="[1] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.002"/>
+  <testcase name="testTimesSparseMatrices()" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.0"/>
+  <testcase name="[3] Type: diagonal&#10;Shape: 3 x 3&#10;7.0 0 0&#10;0 8.0 0&#10;0 0 9.0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.006"/>
+  <testcase name="[4] Type: antidiagonal&#10;Shape: 3 x 3&#10;0 0 10.0&#10;0 11.0 0&#10;12.0 0 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[2] Type: full&#10;Shape: 3 x 2&#10;1.0 2.0 &#10;3.0 4.0 &#10;5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.012"/>
+  <testcase name="[5] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[7] Type: full&#10;Shape: 2 x 1&#10;18.0 &#10;19.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.002"/>
+  <testcase name="[6] Type: sparse&#10;Shape: 3 x 2&#10;1.0 0 2.0 0 0 &#10;3.0 &#10;0 4.0 &#10;0 0 &#10;5.0 &#10;0 6.0 0 0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[9] Type: identity&#10;Shape: 2 x 2&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[10] Type: identity&#10;Shape: 3 x 3&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.013"/>
+  <testcase name="[11] Type: zero&#10;Shape: 3x2&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.005"/>
+  <testcase name="[11] Type: zero&#10;Shape: 3x2&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.007"/>
+  <testcase name="[1] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.008"/>
+  <testcase name="[11] Type: zero&#10;Shape: 3x2&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.006"/>
+  <testcase name="[3] Type: diagonal&#10;Shape: 3 x 3&#10;7.0 0 0&#10;0 8.0 0&#10;0 0 9.0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.017"/>
+  <testcase name="[11] Type: zero&#10;Shape: 3x2&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.006"/>
+  <testcase name="[2] Type: full&#10;Shape: 3 x 2&#10;1.0 2.0 &#10;3.0 4.0 &#10;5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.022"/>
+  <testcase name="[1] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.022"/>
+  <testcase name="[1] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.022"/>
+  <testcase name="[2] Type: full&#10;Shape: 3 x 2&#10;1.0 2.0 &#10;3.0 4.0 &#10;5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.0"/>
+  <testcase name="[6] Type: sparse&#10;Shape: 3 x 2&#10;1.0 0 2.0 0 0 &#10;3.0 &#10;0 4.0 &#10;0 0 &#10;5.0 &#10;0 6.0 0 0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[4] Type: antidiagonal&#10;Shape: 3 x 3&#10;0 0 10.0&#10;0 11.0 0&#10;12.0 0 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[5] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.003"/>
+  <testcase name="[3] Type: diagonal&#10;Shape: 3 x 3&#10;7.0 0 0&#10;0 8.0 0&#10;0 0 9.0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[7] Type: full&#10;Shape: 2 x 1&#10;18.0 &#10;19.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.003"/>
+  <testcase name="[8] Type: full&#10;Shape: 3 x 1&#10;15.0 &#10;16.0 &#10;17.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[2] Type: full&#10;Shape: 3 x 2&#10;1.0 2.0 &#10;3.0 4.0 &#10;5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[5] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.004"/>
+  <testcase name="[7] Type: full&#10;Shape: 2 x 1&#10;18.0 &#10;19.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[11] Type: zero&#10;Shape: 3x2&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[4] Type: antidiagonal&#10;Shape: 3 x 3&#10;0 0 10.0&#10;0 11.0 0&#10;12.0 0 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.019"/>
+  <testcase name="[6] Type: sparse&#10;Shape: 3 x 2&#10;1.0 0 2.0 0 0 &#10;3.0 &#10;0 4.0 &#10;0 0 &#10;5.0 &#10;0 6.0 0 0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.004"/>
+  <testcase name="[1] Type: full&#10;Shape: 2 x 3&#10;1.0 2.0 3.0 &#10;4.0 5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.01"/>
+  <testcase name="[2] Type: full&#10;Shape: 3 x 2&#10;1.0 2.0 &#10;3.0 4.0 &#10;5.0 6.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[5] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[4] Type: antidiagonal&#10;Shape: 3 x 3&#10;0 0 10.0&#10;0 11.0 0&#10;12.0 0 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[6] Type: sparse&#10;Shape: 3 x 2&#10;1.0 0 2.0 0 0 &#10;3.0 &#10;0 4.0 &#10;0 0 &#10;5.0 &#10;0 6.0 0 0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[4] Type: antidiagonal&#10;Shape: 3 x 3&#10;0 0 10.0&#10;0 11.0 0&#10;12.0 0 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[8] Type: full&#10;Shape: 3 x 1&#10;15.0 &#10;16.0 &#10;17.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[5] Type: sparse&#10;Shape: 2 x 3&#10;1.0 0&#10;0 2.0 0 0 3.0 0 ... 0&#10;4.0 0&#10;0 5.0 &#10;0 0 6.0 0 ... 0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.0"/>
+  <testcase name="[3] Type: diagonal&#10;Shape: 3 x 3&#10;7.0 0 0&#10;0 8.0 0&#10;0 0 9.0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.002"/>
+  <testcase name="[7] Type: full&#10;Shape: 2 x 1&#10;18.0 &#10;19.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.002"/>
+  <testcase name="[6] Type: sparse&#10;Shape: 3 x 2&#10;1.0 0 2.0 0 0 &#10;3.0 &#10;0 4.0 &#10;0 0 &#10;5.0 &#10;0 6.0 0 0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[8] Type: full&#10;Shape: 3 x 1&#10;15.0 &#10;16.0 &#10;17.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.0"/>
+  <testcase name="[8] Type: full&#10;Shape: 3 x 1&#10;15.0 &#10;16.0 &#10;17.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.0"/>
+  <testcase name="[7] Type: full&#10;Shape: 2 x 1&#10;18.0 &#10;19.0 &#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.001"/>
+  <testcase name="[3] Type: diagonal&#10;Shape: 3 x 3&#10;7.0 0 0&#10;0 8.0 0&#10;0 0 9.0&#10;" classname="pl.edu.mimuw.MatrixBinaryOperationTest" time="0.005"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
