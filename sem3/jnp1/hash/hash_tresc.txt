@@ -1,0 +1,109 @@
+Biblioteka standardowa języka C++ udostępnia bardzo przydatne kontenery
+(np. unordered_map i unordered_set), których nie ma w bibliotece C. Często też
+potrzebujemy łączyć kod w C++ z kodem w C.
+
+Napisz w C++ moduł hash udostępniający w języku C tablice haszujące ciągi liczb
+typu uint64_t. Powinien on składać się z pliku nagłówkowego hash.h deklarującego
+interfejs modułu oraz pliku hash.cc zawierającego jego implementację. Moduł ten
+ma udostępniać następujące funkcje:
+
+unsigned long hash_create(hash_function_t hash_function);
+
+        Tworzy tablicę haszującą i zwraca jej identyfikator. Parametr
+        hash_function jest wskaźnikiem na funkcję haszującą, która daje w wyniku
+        liczbę uint64_t i ma kolejno parametry uint64_t const * oraz size_t.
+
+void hash_delete(unsigned long id);
+
+        Usuwa tablicę haszującą o identyfikatorze id, o ile ona istnieje.
+        W przeciwnym przypadku nic nie robi.
+
+size_t hash_size(unsigned long id);
+
+        Daje liczbę ciągów przechowywanych w tablicy haszującej
+        o identyfikatorze id lub 0, jeśli taka tablica nie istnieje.
+
+bool hash_insert(unsigned long id, uint64_t const * seq, size_t size);
+
+        Wstawia do tablicy haszującej o identyfikatorze id ciąg liczb
+        całkowitych seq o długości size. Wynikiem jest informacja, czy operacja
+        się powiodła. Operacja się nie powiedzie, jeśli nie ma takiej tablicy
+        haszującej, jeśli tablica haszująca zawiera już taki ciąg, jeśli
+        parametr seq ma wartość NULL lub parametr size ma wartość 0.
+
+bool hash_remove(unsigned long id, uint64_t const * seq, size_t size);
+
+        Usuwa z tablicy haszującej o identyfikatorze id ciąg liczb całkowitych
+        seq o długości size. Wynikiem jest informacja, czy operacja się
+        powiodła. Operacja się nie powiedzie, jeśli nie ma takiej tablicy
+        haszującej, jeśli tablica haszująca nie zawiera takiego ciągu,
+        jeśli parametr seq ma wartość NULL lub parametr size ma wartość 0.
+
+void hash_clear(unsigned long id)
+
+        Jeśli tablica haszująca o identyfikatorze id istnieje i nie jest pusta,
+        to usuwa z niej wszystkie elementy. W przeciwnym przypadku nic nie robi.
+
+bool hash_test(unsigned long id, uint64_t const * seq, size_t size);
+
+        Daje wynik true, jeśli istnieje tablica haszująca o identyfikatorze id
+        i zawiera ona ciąg liczb całkowitych seq o długości size. Daje wynik
+        false w przeciwnym przypadku oraz gdy parametr seq ma wartość NULL lub
+        parametr size ma wartość 0.
+
+Należy ukryć przed światem zewnętrznym wszystkie zmienne globalne i funkcje
+pomocnicze nienależące do interfejsu modułu.
+
+Funkcje powinny wypisywać na standardowy strumień błędów informacje
+diagnostyczne. Poprawność parametrów i wykonania funkcji można sprawdzać za
+pomocą asercji. Kompilowanie z parametrem -DNDEBUG powinno wyłączać wypisywanie
+i asercje. Obsługa standardowego wyjścia diagnostycznego powinna być
+realizowana z użyciem strumienia C++.
+
+Wskaźnik na funkcję haszującą o wartości NULL jest niepoprawny.
+
+Oczekiwane rozwiązanie powinno korzystać z kontenerów i metod udostępnianych
+przez standardową bibliotekę C++. Nie należy definiować własnych struktur lub
+klas, poza ewentualnie przypadkiem tworzenia obiektu haszującego.
+Nie należy przechowywać przekazanych przez użytkownika wskaźników
+uint64_t const * bezpośrednio, bowiem użytkownik może po wykonaniu operacji
+modyfikować dane pod uprzednio przekazanym wskaźnikiem lub zwolnić pamięć.
+
+W rozwiązaniu nie należy nadużywać kompilacji warunkowej. Fragmenty tekstu
+źródłowego realizujące wyspecyfikowane operacje modułu hash nie powinny zależeć
+od sposobu kompilowania - parametr -DNDEBUG lub jego brak (inaczej wypisywanie
+informacji diagnostycznych nie miałoby sensu).
+
+Przykład użycia modułu hash w języku C znajduje się w pliku hash_test1.c.
+
+Ludzie bywają przewrotni i mając kod, który można używać w języku C, chcą go
+też używać w C++. Należy zapewnić możliwość użycia pliku nagłówkowego hash.h
+w języku C++ w taki sposób, aby interfejs modułu hash został umieszczony
+w przestrzeni nazw jnp1 i nie był widoczny w globalnej przestrzeni nazw.
+Przykład użycia w języku C++ znajduje się w pliku hash_test2.cc.
+
+Kompilowanie przykładów:
+
+  g++ -Wall -Wextra -O2 -std=c++17 -c hash.cc -o hash.o
+  gcc -Wall -Wextra -O2 -std=c17 -c hash_test1.c -o hash_test1.o
+  g++ -Wall -Wextra -O2 -std=c++17 -c hash_test2.cc -o hash_test2.o
+  g++ hash_test1.o hash.o -o hash_test1
+  g++ hash_test2.o hash.o -o hash_test21
+  g++ hash.o hash_test2.o -o hash_test22
+
+Przykłady informacji diagnostycznych wypisywanych przez programy hash_test1,
+hash_test21 i hash_test22 znajdują się odpowiednio w plikach hash_test1.err
+i hash_test2.err.
+
+Pliki z rozwiązaniem hash.h i hash.cc należy umieścić w repozytorium w katalogu
+
+grupaN/zadanie2/ab123456+cd123456
+
+lub
+
+grupaN/zadanie2/ab123456+cd123456+ef123456
+
+gdzie N jest numerem grupy, a ab123456, cd123456, ef123456 są identyfikatorami
+członków zespołu umieszczającego to rozwiązanie. Katalog z rozwiązaniem nie
+powinien zawierać innych plików. Nie wolno umieszczać w repozytorium plików
+dużych, binarnych, tymczasowych (np. *.o) ani innych zbędnych.

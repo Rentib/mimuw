@@ -1,0 +1,77 @@
+Około roku 790 Karol Wielki wprowadził w rządzonym przez siebie państwie
+karolińskim nowy system monetarny. Zgodnie z jego założeniami 1 funt karoliński
+srebra (ok. 409 gramów) odpowiadający teoretycznej monecie zwanej liwr (nie
+wybijanej w praktyce) był dzielony na 240 denarów lub 20 solidów:
+
+1 liwr = 20 solidów = 240 denarów
+
+Zadanie polega na zaimplementowaniu klasy Moneybag reprezentującej sakiewki
+w państwie franków. Sakiewka przechowuje trzy rodzaje monet: liwry, solidy
+i denary. Liczba monet każdego rodzaju jest z zakresu od 0 do 2^64 - 1. Powinno
+być możliwe:
+    - tworzenie sakiewki na podstawie liczby poszczególnych monet, np.
+      Moneybag(1, 2, 3) powinno stworzyć sakiewkę, w której znajdują się 1 liwr,
+      2 solidy i 3 denary; nie powinno być natomiast możliwości utworzenia
+      obiektu bez podania liczby monet;
+    - tworzenie sakiewki przez skopiowanie innej sakiewki;
+    - odczytanie liczby poszczególnych monet za pomocą odpowiednio metod
+      livre_number(), solidus_number() i denier_number();
+    - wykonywanie operacji dodawania, odejmowania zawartości sakiewek oraz
+      mnożenia zawartości sakiewki przez liczbę całkowitą nieujemną;
+    - wysłanie na strumień wyjściowy napisu reprezentującego zawartość sakiewki;
+    - porównywanie zawartości sakiewek – na sakiewkach zdefiniowany jest
+      naturalny porządek częściowy;
+    - użycie inicjowanych w trakcie kompilowania i stałych obiektów Denier,
+      Livre oraz Solidus, reprezentujących poszczególne monety;
+    - rzutowanie sakiewki na typ bool, informujące, czy sakiewka jest niepusta
+      (zawiera choć jedną monetę).
+
+Jeżeli operacja arytmetyczna miałaby spowodować, że jej wynik nie mieści się
+w dopuszczalnym zakresie, to należy zgłosić wyjątek std::out_of_range ze
+stosownym komunikatem. Przy czym zawartość sakiewki, na której jest wykonywana
+operacja, nie może się zmienić.
+
+Klasa Moneybag powinna udostępniać typ numeryczny coin_number_t, który
+reprezentuje liczbę monet.
+
+Oprócz tego należy zaimplementować klasę Value, reprezentującą wartość sakiewki
+w denarach. Powinno być możliwe:
+    - utworzenie wartości na podstawie sakiewki lub liczby całkowitej
+      nieujemnej;
+    - kopiowanie wartości;
+    - porównywanie wartości – na wartościach zdefiniowany jest naturalny
+      porządek liniowy;
+    - porównywanie wartości z liczbami całkowitymi nieujemnymi;
+    - rzutowanie wartości na obiekt klasy string reprezentujący wartość
+      w zapisie dziesiętnym.
+
+Jak najwięcej metod i funkcji powinno być możliwe do wykonania w czasie
+kompilowania programu.
+
+Operacje na sakiewkach nie powinny korzystać z typów reprezentujących liczby
+o większym zakresie niż potrzebny do reprezentowania liczby monet.
+
+Nie należy korzystać z dziedziczenia.
+
+Przykład użycia znajduje się w pliku moneybag_example.cc, a wypisywane przez
+niego informacje są w pliku moneybag_example.out. Formaty wypisywania sakiewki
+i wartości powinny być dokładnie takie jak w tym pliku.
+
+Rozwiązanie będzie kompilowane na maszynie students poleceniem
+
+g++ -Wall -Wextra -O2 -std=c++20 *.cc
+
+Rozwiązanie powinno zawierać plik moneybag.h oraz opcjonalnie plik moneybag.cc.
+
+Rozwiązanie należy umieścić w repozytorium w katalogu
+
+grupaN/zadanie3/ab123456+cd123456
+
+lub
+
+grupaN/zadanie3/ab123456+cd123456+ef123456
+
+gdzie N jest numerem grupy, a ab123456, cd123456, ef123456 są identyfikatorami
+członków zespołu umieszczającego to rozwiązanie. Katalog z rozwiązaniem nie
+powinien zawierać innych plików. Nie wolno umieszczać w repozytorium plików
+dużych, binarnych, tymczasowych (np. *.o) ani innych zbędnych.

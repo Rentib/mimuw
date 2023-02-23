@@ -1,0 +1,105 @@
+=== Zadanie Wyjście z Grupy ===
+
+Wyjście z Grupy to gra planszowa, w której celem gracza jest wyjście z grupy na
+Mistrzostwach Świata w piłce nożnej. Gracz może się wzbogacać na organizacji
+i rozgrywaniu meczów.
+
+W grze może brać udział od 2 do 11 graczy. Każdy gracz dostaje na początku 1000
+zdzisławów i rozpoczyna grę na polu początek sezonu. Gracze poruszają się po
+cyklicznej planszy złożonej z 12 pól. Podczas swojego ruchu, o ile gracz nie
+pauzuje, to:
+* rzuca dwoma kostkami do gry,
+* przesuwa się o liczbę pól równą sumie wyrzuconych wartości kostek,
+* wykonuje akcję związaną z polem (o ile jakaś akcja jest związana z tym polem).
+
+Gracz mający na końcu rozgrywek najwięcej zdzisławów, wychodzi z grupy
+i przechodzi do historii.
+
+Są następujące typy pól z akcjami:
+* początek sezonu – przy przejściu lub zatrzymaniu się na tym polu gracz dostaje
+  50 zdzisławów;
+* gol – przy zatrzymaniu na tym polu gracz dostaje premię za gola;
+* rzut karny – przy zatrzymaniu się na tym polu gracz musi zapłacić Szczęsnemu
+  za obronę rzutu karnego;
+* bukmacher – przy zatrzymaniu się na tym polu co trzeci gracz wygrywa zakład
+  w zdzisławach, a pozostali przegrywają; seria zaczyna się od wygranego zakładu
+  u bukmachera;
+* żółta kartka – gracz czeka określoną liczbę kolejek;
+* mecz – przy przejściu przez to pole gracz musi rozegrać mecz i uiścić opłatę
+  za rozegranie; gracz, który zatrzyma się na tym polu, zgarnia wszystkie
+  pobrane opłaty za rozegrane mecze pomnożone przez wagę meczu wg FIFA.
+
+Mecz może być towarzyski, o punkty lub finał. Waga meczu towarzyskiego wynosi 1,
+meczu o punkty wynosi 2,5, natomiast waga finału to 4.
+
+Jeśli gracz nie będzie miał gotówki na opłaty w którymkolwiek momencie gry, to
+natychmiast bankrutuje. Bankructwo oznacza, że kończy grę i odpada z rozgrywek.
+Jeśli pozostał tylko jeden gracz w grze, to gra się kończy.
+
+Każde pole planszy ma swoją nazwę. Są następujące pola:
+1.  początek sezonu;
+2.  mecz z San Marino, szansa na wygraną, towarzyski, opłata za rozegranie meczu
+    to 160 zdzisławów;
+3.  dzień wolny od treningu; odpoczywasz i popijasz napoje wedle wyboru, nic się
+    nie dzieje, trener może Ci skoczyć;
+4.  mecz z Liechtensteinem, no tu już trudniej, towarzyski, opłata za rozegranie
+    meczu to 220 zdzisławów;
+5.  żółta kartka, skosiłeś brutalnie Lewandowskiego, dostajesz cytrynę i czekasz
+    trzy kolejki;
+6.  mecz z Meksykiem, dawniej otwarcia, o punkty, opłata za rozegranie meczu to
+    300 zdzisławów;
+7.  mecz z Arabią Saudyjską, dawniej o wszystko, ale dziś o punkty, opłata za
+    rozegranie meczu to 280 zdzisławów;
+8.  bukmacher, przy zatrzymaniu się co trzeci gracz wygrywa 100 zdzisławów za
+    zakład, pozostali przegrywają 100 zdzisławów;
+9.  mecz z Argentyną, zwykle mecz o honor, ale jest szansa na wygraną 0:2,
+    o punkty, opłata za rozegranie meczu 250 zdzisławów;
+10. gol, po weryfikacji VAR sędzia uznaje gola i dostajesz premię 120 zdzisławów;
+11. mecz z Francją, 1/8 finału, i to by było na tyle, jednak finał, opłata za
+    rozegranie meczu 400 zdzisławów;
+12. rzut karny, tym razem skosiłeś Lewandowskiego w polu karnym, płacisz
+    Szczęsnemu za obronę karniaka 180 zdzisławów.
+
+Należy dostarczyć implementację klasy WorldCup2022 dziedziczącej po klasie
+WorldCup, która została zdefiniowana w nagłówku worldcup.h, dostępnym
+w repozytorium w katalogu z treścią zadania.
+
+Wskazówki:
+* należy zaprojektować potrzebne klasy wraz z ich hierarchiami; tam, gdzie jest
+  to wskazane należy wydzielić klasy reprezentujące interfejsy;
+* powinny się pojawić klasy reprezentujące co najmniej: pole, planszę, gracza;
+* projekt powinien uwzględniać możliwość dodawania nowych pól do planszy oraz
+  zmiany układu pól;
+* przy projektowaniu warto dbać o luźne powiązania (ang. loose coupling)
+  i wysoką spójność (ang. high cohesion) elementów;
+* zasady, które pomagają osiągnąć luźne powiązania i wysoką spójność to:
+  wzorce GRASP, zasady SOLID, wzorce projektowe GoF;
+* w komentarzach należy wyjaśniać założenia projektowe.
+
+=== Przykład użycia ===
+
+Przykład użycia jest dostępny w repozytorium w katalogu z treścią zadania
+w pliku worldcup_example.cc.
+
+=== Ustalenia techniczne ===
+
+Rozwiązanie musi zawierać plik nagłówkowy worldcup2022.h. Oprócz tego
+rozwiązanie może zawierać dodatkowe pliki nagłówkowe *.h oraz opcjonalnie pliki
+źródłowe *.cc.
+
+Rozwiązanie będzie kompilowane poleceniem
+
+g++ -Wall -Wextra -O2 -std=c++20 *.cc
+
+Pliki rozwiązania należy umieścić w repozytorium w katalogu
+
+grupaN/zadanie6/ab123456+cd123456
+
+lub
+
+grupaN/zadanie6/ab123456+cd123456+ef123456
+
+gdzie N jest numerem grupy, a ab123456, cd123456, ef123456 są identyfikatorami
+członków zespołu umieszczającego to rozwiązanie. Katalog z rozwiązaniem nie
+powinien zawierać innych plików. Nie wolno umieszczać w repozytorium plików
+dużych, binarnych, tymczasowych (np. *.o) ani innych zbędnych.

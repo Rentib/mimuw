@@ -1,0 +1,61 @@
+= Kryteria oceniania drugiego zadania =
+
+== Cele dydaktyczne ==
+
+Studenci powinni poznać:
+- kolejne kontenery z STL-a: unordered_map i unordered_set,
+- sposób łączenia kodu w C++ z kodem w C,
+- metody inicjowania obiektów globalnych w C++ i wynikające stąd problemy,
+- elementy kompilacji warunkowej.
+
+== Ocena wstępna ==
+
+Jeśli ktoś wbrew temu, co jest jawnie napisane w treści zadania, tak po prostu
+zaimplementował std::unordered_set<uint64_t const *>, to należy się 0 punktów.
+Również 0 punktów otrzyma rozwiązanie, które używa innej funkcji haszującej niż
+ta podana w wywołaniu funkcji hash_create.
+
+== Ocena automatyczna ==
+
+Za testy automatyczne zostanie przyznana ocena z przedziału od 0 do 6 punków.
+Nie ma punktów ułamkowych. Testy zostaną ujawnione dopiero po upłynięciu
+terminu oddania zadania.
+
+== Ocena jakości kodu ==
+
+Zaczynamy od 4 punktów i odejmujemy po jednym punkcie za:
+- nieskuteczną obsługę (lub jej brak) problemu „static initialization order
+  fiasco” (czytanka „Inicjowanie obiektów globalnych”), o ile nie zostanie to
+  wykryte przez testy automatyczne;
+- niepoprawne pliki nagłówkowe,
+  czyli brak headerguard (#ifndef #define #endif) lub #ifdef __cplusplus;
+- niezgodność zawartości repozytorium ze specyfikacją zadania;
+- ostrzeżenia wypisywane przez kompilator;
+- zły styl, używanie int zamiast size_t itp.;
+- nieukrycie przed światem zewnętrznym wszystkich zmiennych globalnych i funkcji
+  pomocniczych nienależących do wyspecyfikowanego interfejsu modułu;
+- uzależnienie fragmentów tekstu źródłowego realizujące wyspecyfikowane operacje
+  na zbiorach od sposobu kompilowania; braki w wypisywanych informacjach
+  diagnostycznych; wypisywanie informacji diagnostycznych w złych miejscach,
+  np. informacja o wywołaniu funkcji powinna być wypisana na początku, zanim
+  funkcja zacznie coś robić, a informacja o wykonaniu dopiero wtedy, gdy
+  struktura danych została poprawnie zmodyfikowana lub zbadana;
+- użycie typedef zamiast using;
+- błędy w stosowaniu przestrzeni nazw;
+- wielokrotne wyszukiwanie tego samego klucza w mapie;
+- inne niezgodności z treścią zadania niewykryte przez testy automatyczne.
+Przy czym ocena nie może być ujemna.
+
+Ponadto piętnujemy:
+- przekazywanie funkcjom dużych argumentów (np. typu vector) przez wartość,
+  takie obiekty przekazujemy przez stałą referencję (const &);
+- niezwalnianie zaalokowanej pamięci globalnych struktur danych; jedno
+  z proponowanym w czytankach rozwiązań problemu initialization order fiasco
+  polega na użyciu pamięci dynamicznej, której się nie zwalnia (zakłada się, że
+  system operacyjny odzyska tę pamięć po zakończeniu procesu); w naszym zadaniu
+  można zastosować rozwiązanie, w którym nie trzeba używać pamięci dynamicznej,
+  ale to rozwiązanie też nie jest bez wad (punkt #construct-on-first-use-v2
+  czytanki), więc można dopuścić rozwiązanie z niezwalnianą pamięcią dynamiczną.
+Na razie tylko wskazujemy te błędy i nie odejmujemy za nie punktów, bo są to
+zagadnienia pojawiające się w kolejnych zadaniach, w których już będziemy za to
+karać.

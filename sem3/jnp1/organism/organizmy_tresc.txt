@@ -1,0 +1,147 @@
+Celem zadania jest napisanie kodu do symulowania interakcji organizmów
+w środowisku naturalnym. Organizm jest reprezentowany przez instancję szablonu
+
+    template <typename species_t, bool can_eat_meat, bool can_eat_plants> class Organism;
+
+Typ species_t określa gatunek. Typ ten powinien spełniać koncept
+std::equality_comparable, co powinno zostać sprawdzone podczas kompilowania.
+Wartości can_eat_plants oraz can_eat_meat określają odpowiednio, czy dany
+organizm potrafi jeść mięso lub rośliny.
+
+Rozwiązanie powinno udostępniać cztery typy organizmów będące specjalizacjami
+szablonu Organism:
+
+    Carnivore – mięsożerca,
+    Omnivore – wszystkożerca,
+    Herbivore – roślinożerca,
+    Plant – roślina, nie potrafi jeść ani mięsa, ani roślin.
+
+Każdy organizm powinien definiować metodę
+
+    uint64_t get_vitality();
+
+która zwraca witalność danego organizmu. Organizm, którego witalność wynosi 0,
+uznaje się za martwy.
+
+Klasa Organism powinna udostępniać konstruktor ustawiający gatunek
+i początkową witalność organizmu:
+
+    Organism(species_t const &species, uint64_t vitality);
+
+Powinno być możliwe poznanie gatunku organizmu:
+
+    const species_t &get_species();
+
+Ponadto obiekt typu Organism powinien mieć dodatkowe metody umożliwiające
+eleganckie rozwiązanie zadania, o specyfikacji wybranej przez rozwiązujących.
+
+Organizmy spotykają się według poniższych reguł. Reguły są aplikowane po kolei,
+aż do znalezienia pierwszej, która rozstrzyga efekt spotkania. Wtedy kończymy
+sprawdzanie, ignorując następne reguły.
+
+1. Możliwe jest spotkanie jedynie organizmów, których typ gatunku (species_t)
+jest taki sam (wartości oczywiście nie muszą być takie same). Przykładowo przy
+poniższych deklaracjach gazela może spotkać lwa, ale nie psa. Próba spotkania
+organizmów o różnych typach powinna być wykrywana podczas kompilowania
+i sygnalizować błąd.
+
+    Carnivore<std::string> lion("Panthera leo", 462);
+    Herbivore<std::string> gazelle("Gazella dorcas", 130);
+    Omnivore<uint64_t> dog(1, 15);
+
+Uznajemy, że dwa organizmy o różnych preferencjach żywieniowych są różnymi
+gatunkami, nawet jeżeli porównanie species_t zwraca true. Przykładowo
+poniższe dwa organizmy są traktowane jako różne gatunki.
+
+    Omnivore<std::string> human("Homo Sapiens", 100);
+    Herbivore<std::string> vegetarian("Homo Sapiens", 10);
+
+2. Nie jest możliwe spotkanie dwóch roślin, gdyż są one niemobilne. Próba
+spotkania dwóch roślin powinna być wykrywana podczas kompilowania
+i sygnalizować błąd.
+
+3. Spotkanie, w którym jedna ze stron jest martwa, nie powoduje skutków.
+
+4. Spotkanie dwóch zwierząt tego samego gatunku prowadzi do godów. Dla
+uproszczenia zakładamy nierealistycznie, że wszystkie organizmy są obojnacze
+i możliwe jest łączenie w pary dowolnych dwóch przedstawicieli gatunku. Wynikiem
+jest dziecko - tego samego gatunku co rodzice i witalności będącej średnią
+arytmetyczną witalności rodziców (zaokrągloną w dół).
+
+5. Spotkanie organizmów, które nie potrafią się zjadać, nie przynosi efektów.
+
+6. Spotkanie dwóch zwierząt, które potrafią się nawzajem zjadać, prowadzi do
+walki. Walkę wygrywa organizm o wyższej witalności. Organizm przegrywający walkę
+ginie. Organizm, który wygrał, dodaje do swojej witalności połowę (zaokrągloną
+w dół) witalności organizmu, który przegrał. Gdy organizmy mają równą witalność,
+dochodzi do wyniszczającej walki: oba organizmy zabijają się nawzajem.
+
+7. Spotkanie roślinożercy lub wszystkożercy z rośliną skutkuje tym, że roślina
+zostaje zjedzona. Zjadający zwiększa swoją witalność o witalność rośliny,
+a witalność rośliny jest ustawiana na 0.
+
+8. Przy spotkaniu, w którym zdolność do konsumpcji zachodzi tylko w jedną
+stronę, rozpatrujemy dwa przypadki. Jeśli „potencjalnie zjadany" ma witalność
+nie mniejszą niż „potencjalnie zjadający", to nic się nie dzieje. W przeciwnym
+przypadku zjadający dodaje do swojej witalności połowę (zaokrągloną w dół)
+witalności zjedzonego, a zjedzony ginie.
+
+Spotkanie powinno być realizowane przez szablon funkcji o sygnaturze:
+
+    template <typename species_t, bool sp1_eats_m, bool sp1_eats_p, bool sp2_eats_m, bool sp2_eats_p>
+    constexpr std::tuple<Organism<species_t, sp1_eats_m, sp1_eats_p>,
+                         Organism<species_t, sp2_eats_m, sp2_eats_p>,
+                         std::optional<Organism<species_t, sp1_eats_m, sp1_eats_p>>>
+    encounter(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1,
+              Organism<species_t, sp2_eats_m, sp2_eats_p> organism2);
+
+Jej wynikiem jest krotka zawierająca kolejno: pierwotne organizmy zmodyfikowane
+w wyniku zdarzenia (jako nowe obiekty), w kolejności jak w argumentach, oraz
+opcjonalnie nowy organizm powstały w wyniku spotkania.
+
+Ponadto rozwiązanie powinno udostępniać szablon
+
+    template <typename species_t, bool sp1_eats_m, bool sp1_eats_p, typename ... Args>
+    constexpr Organism<species_t, sp1_eats_m, sp1_eats_p>
+    encounter_series(Organism<species_t, sp1_eats_m, sp1_eats_p> organism1, Args ... args)
+
+gdzie Args również są typu Organism o tym samym species_t co organism1, ale być
+może odmiennych preferencjach żywieniowych, realizujący serię spotkań organizmu
+będącego pierwszym argumentem z organizmami podanymi na pozostałych argumentach,
+w kolejności od lewej do prawej. Wynikiem funkcji jest organism1 zmieniony
+poprzez wszystkie spotkania. Zmiany na pozostałych organizmach oraz ewentualne
+dzieci powstałe w wyniku spotkań nie są zwracane.
+
+Możliwe jest zadeklarowanie
+
+    Herbivore<std::string> lion("Panthera leo", 462);
+
+Celem jest odpowiedzenie na pytanie, co by było gdyby lwy były roślinożerne?
+
+W deklaracjach funkcji i klas należy powstawiać specyfikatory const oraz
+constexpr wszędzie tam, gdzie to jest konieczne lub możliwe.
+
+W tym zadaniu zabronione jest korzystanie z mechanizmu dziedziczenia.
+Należy zamiast tego używać specjalizacji szablonów.
+
+Rozwiązanie będzie kompilowane za pomocą polecenia
+
+    g++ -std=c++20 -Wall -Wextra -O2
+
+Przykład użycia znajduje się w pliku organism_example.cc. Wszystkie klasy oraz
+funkcje w tym zadaniu powinny być konstruowalne oraz obliczalne w czasie
+kompilacji.
+
+Rozwiązanie powinno zawierać plik organism.h oraz opcjonalnie inne pliki
+nagłówkowe. Pliki rozwiązania należy umieścić w repozytorium w katalogu
+
+grupaN/zadanie4/ab123456+cd123456
+
+lub
+
+grupaN/zadanie4/ab123456+cd123456+ef123456
+
+gdzie N jest numerem grupy, a ab123456, cd123456, ef123456 są identyfikatorami
+członków zespołu umieszczającego to rozwiązanie. Katalog z rozwiązaniem nie
+powinien zawierać innych plików. Nie wolno umieszczać w repozytorium plików
+dużych, binarnych, tymczasowych (np. *.o) ani innych zbędnych.

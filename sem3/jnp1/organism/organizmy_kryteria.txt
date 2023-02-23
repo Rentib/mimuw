@@ -1,0 +1,35 @@
+=== Proponowane kryteria oceniania czwartego zadania ===
+
+== Cele dydaktyczne ==
+
+Studenci powinni poznać:
+- szablony oraz ich specjalizację i częściową specjalizację,
+- techniki manipulowania typami i danymi na etapie kompilowania,
+- kwalifikator constexpr oraz stały kontekst wykonania,
+- metody kompilacji warunkowej inne niż użycie preprocesora,
+- techniki radzenia sobie z szablonami o zmiennej liczbie argumentów,
+- koncepty (ang. concepts) i ograniczenia (ang. constraints),
+- elementy biblioteki standardowej pomagające w powyższym, np. plik concepts
+  z biblioteki standardowej.
+
+== Ocena automatyczna ==
+
+TODO
+
+== Ocena jakości tekstu źródłowego ==
+
+Zaczynamy od 4 punktów i odejmujemy po jednym punkcie za
+(przy czym ocena nie może być ujemna):
+- niezgodność zawartości repozytorium ze specyfikacją zadania;
+- nieelegancki styl;
+- ostrzeżenia wypisywane przez kompilator;
+- brak header guard;
+- obliczenia wykonywane w trakcie wykonywania programu;
+- używanie SFINAE do ograniczania instancjonowania szablonów (enable_if itd.);
+- nadmierne specjalizowanie szablonów (kiedy można prościej);
+- błędy w konceptach, o ile testy tego nie wykryły;
+- błędy w innych ograniczeniach nałożonych na instancje szablonów, o ile testy
+  tego nie wykryły;
+- inne błędy i niezgodności z treścią zadania lub odpowiedziami udzielonymi na
+  forum, a niewykryte przez testy automatyczne;
+- niezastosowanie się do uwag udzielonych w poprzednich zadaniach.

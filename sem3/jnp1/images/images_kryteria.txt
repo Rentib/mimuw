@@ -1,0 +1,21 @@
+== Ocena z testów automatycznych: 0 – 6 pkt. ==
+
+Ocena za testy wyraża się wzorem:
+
+  podłoga(6 punktów * liczba zaliczonych testów / liczba wszystkich testów)
+
+== Ocena jakości tekstu źródłowego: 0 – 4 pkt ==
+
+Zaczynamy od 4 punktów i odejmujemy po jednym punkcie za (przy czym ocena nie
+może być ujemna):
+
+* niezgodność zawartości repozytorium ze specyfikacją zadania;
+* ostrzeżenia wypisywane przez kompilator;
+* niedostateczne użycie funkcji lambda lub compose i lift z pliku functional.h;
+* zastosowanie konstrukcji if lub if-else (można używać „funkcyjnego if”, czyli
+  „operatora ?:”;
+* nieukrycie dodatkowych klas, struktur, funkcji w przestrzeni nazw Detail;
+* nieodpowiedni styl, brak lub błędny „header guard”, zbyt skromne komentarze;
+* niespełnienie innych wymagań z treści zadania niewykryte przez testy;
+  automatyczne;
+* niezastosowanie się do uwag udzielonych przy ocenie poprzednich zadań.

@@ -1,0 +1,41 @@
+= Kryteria oceniania trzeciego zadania =
+
+== Cele dydaktyczne ==
+
+Studenci powinni poznać:
+- rodzaje i zakresy widoczności konstruktorów,
+- tworzenie operatorów jako metod klasowych i funkcji globalnych,
+- operatory porównujące,
+- jawne i niejawne konwersje typów,
+- listy inicjujące,
+- użycie słów kluczowych const, constexpr, consteval, constinit,
+- użycie słowa kluczowego inline.
+
+== Ocena automatyczna ==
+
+Będzie dostępnych 6 automatycznych testów. Za każdy test, który program
+przejdzie poprawnie, stawiamy jeden punkt. Testy zostaną ujawnione dopiero po
+upłynięciu terminu oddania zadania. Testy mogą być złośliwe.
+
+== Ocena jakości kodu ==
+
+Zaczynamy od 4 punktów i odejmujemy po jednym punkcie za (przy czym ocena nie
+może być ujemna):
+* niezgodność zawartości repozytorium ze specyfikacją zadania;
+* nieelegancki styl;
+* ostrzeżenia wypisywane przez kompilator;
+* nieprawidłowe, niedostateczne używanie const, o ile testy tego nie wykryły;
+* nieuzasadnione przekazywanie przez wartość dużych obiektów;
+* deklarowanie publicznych składowych lub metod, gdy wystarczyłyby prywatne,
+  nadużywanie relacji friend między klasami;
+* niezgodność interfejsu klas z treścią zadania;
+* definiowanie zbyt wielu operatorów lub zbyt wielu wersji operatorów;
+* nieużywanie listy inicjującej w konstruktorze;
+* „copy-paste”, czyli powtarzanie kodu, który można łatwo uwspólnić;
+* brak header guard;
+* nadmiarowe #include;
+* inne błędy i niezgodności z treścią zadania lub odpowiedziami udzielonymi na
+  forum, a niewykryte przez testy automatyczne;
+* niestosowanie się do innych uwag udzielonych w poprzednich zadaniach.
+
+Nie wymagamy jeszcze prawidłowego oznaczania metod niezgłaszających wyjątków.

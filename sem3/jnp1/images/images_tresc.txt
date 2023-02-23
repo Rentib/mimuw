@@ -1,0 +1,210 @@
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+*                               Obrazy funkcyjne                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+W pewnych zastosowaniach znacznie lepszą od klasycznych bitmap, opisujących wy-
+gląd każdego piksela,  jest grafika wektorowa.  Jej ideą jest opisywanie obrazu
+za pomocą obiektów matematycznych,  np. wektorów lub krzywych,  które można do-
+wolnie skalować i łatwo aplikować na nich pewne przekształcenia.
+
+Jeszcze  bardziej  uogólnioną koncepcją  obrazu są  tzw. obrazy funkcyjne (ang.
+functional images), które są funkcjami R^2 -> A, gdzie A w szczególnym przypad-
+ku może być zbiorem kolorów.
+
+                                      * * *
+
+W katalogu z treścią zadania zostały udostępnione następujące pliki:
+  bmp.h, bmp.cc               – obsługa zapisu obrazu w formacie BMP,
+  color.h, color.cc           – definicja kolorów w formacie RGB,
+  coordinate.h, coordinate.cc – punkt, wektor, układy współrzędnych,
+  example.cc                  – przykład użycia programu,
+  *.bmp                       – pliki BMP generowane przez example.cc.
+
+Zadanie polega na stworzeniu plików o nazwach:
+  images.h (oraz opcjonalnie images.cc),
+  functional.h (oraz opcjonalnie functional.cc),
+których zawartość jest streszczona poniżej  i dokładniej opisana w dalszej czę-
+ści zadania.
+
+  images.*  - biblioteka implementująca obrazy funkcyjne.
+
+  functional.* – pomocnicza biblioteka  implementująca  pewne konstrukcje znane
+  z języków funkcyjnych.
+
+                                      * * *
+
+Plik(i) images.* powinien/powinny definiować typy,  szablony funkcji oraz funk-
+cje opisane poniżej.
+
+  Typy:
+
+    Fraction: typ zmiennoprzecinkowy kompatybilny  z std::is_floating_point ob-
+    sługujący liczby z zakresu [0, 1].  Ten typ  może zostać zdefiniowany  jako
+    alias na jeden z typów fundamentalnych.
+
+    Base_image: szablon aliasu na std::function o następującej definicji:
+      template<typename T>
+      using Base_image = std::function<T(const Point)>;
+    Base_image jest nazywany dalej obrazem bazowym.
+
+    Region:  równoważny Base_image<bool>.  Region (przez duże R)  jest nazywany
+    dalej regionem lub wycinanką. Regiony służą do składania obrazów właściwych
+    (zob. poniżej), np. z użyciem funkcji cond opisanej niżej.
+
+    Image: równoważny Base_image<Color>. Image jest nazywany dalej obrazem wła-
+    ściwym. Obraz właściwy jest kanonicznym przykładem obrazu funkcyjnego.
+
+    Blend: równoważny Base_image<Fraction>.  Blend jest nazywany dalej mieszan-
+    ką.  Mieszanka służy do mieszania kolorów w proporcjach zadanych parametrem
+    typu Fraction.
+
+  Szablony funkcji:
+
+    Base_image<T> constant(T t) – tworzy stały obraz bazowy, a więc zwracający:
+    - wartość true w przypadku regionu dla t == true,
+    - kolor „cynober” w przypadku obrazu właściwego  dla t == Colors::
+      Vermilion lub
+    - wartość 0,42 w przypadku mieszanki dla t == 0.42.
+    Uwaga: Sformułowania typu „Base_image<T> constant(T t)” należy rozumieć ja-
+           ko  szablon funkcji parametryzowany  zmienną typową T,  przyjmującej
+           argument typu równemu jednemu  z następujących  (należy wybrać samo-
+           dzielnie): const T, const T&, T  i zwracający typ Base_image<T>.  Ta
+           uwaga  dotyczy  wszystkich  szablonów  funkcji oraz,  przez analogię
+           w zakresie typu przyjmowanego, samych funkcji.
+
+    Base_image<T> rotate(Base_image<T> image, double phi) – obraca obraz bazowy
+    o kąt phi (wyrażony w radianach). Kierunek obrotu można określić na podsta-
+    wie pliku rotate.bmp.
+
+    Base_image<T> translate(Base_image<T> image, Vector v) – przesuwa obraz ba-
+    zowy o wektor v.  Kierunek przesunięcia  można określić  na podstawie pliku
+    translate.bmp.
+
+    Base_image<T> scale(Base_image<T> image, double s) – skaluje  obraz  bazowy
+    o współczynnik s.  Dla s == 2 otrzymuje się obraz bazowy dwukrotnie powięk-
+    szony.
+
+    Base_image<T> circle(Point q, double r, T inner, T outer) –  tworzy   obraz
+    bazowy koła o środku q, promieniu r oraz zwracanych wartościach inner w ko-
+    le i na obwodzie oraz outer poza nim.
+
+    Base_image<T> checker(double d, T this_way, T that_way) – tworzy  obraz ba-
+    zowy szachownicy o szerokości kratki d oraz zwracanych wartościach zadanych
+    przez pozostałe dwa argumenty. Położenie this_way i that_way należy wydedu-
+    kować na podstawie plików example.cc oraz checker.bmp.
+
+    Base_image<T> polar_checker(double d, int n, T this_way, T that_way) – two-
+    rzy obraz bazowy „szachownicy biegunowej”.  W implementacji  należy odwołać
+    się do zdefiniowanej wcześniej funkcji checker  i przekazać jej argument d.
+    Znaczenie parametru n oraz położenie this_way i that_way należy wydedukować
+    na podstawie plików example.cc  oraz  polar_checker.bmp.  Można założyć, że
+    użytkownik będzie wywoływać funkcję z argumentem n o parzystej wartości.
+
+    Base_image<T> rings(Point q, double d, T this_way, T that_way) –     tworzy
+    obraz bazowy  koncentrycznych naprzemiennych pasów  szerokości d   o środku
+    w punkcie q.  Położenie this_way i that_way należy wydedukować na podstawie
+    plików example.cc oraz rings.bmp.
+
+    Base_image<T> vertical_stripe(double d, T this_way, T that_way) –    tworzy
+    obraz bazowy w postaci wycentrowanego paska this_way o szerokości d otoczo-
+    nego przez that_way.
+
+  Funkcje:
+
+    Image cond(Region region, Image this_way, Image that_way) – korzysta  z re-
+    gionu (wycinanki),  który wycina i klei  dwa obrazy właściwe, tworząc w ten
+    sposób nowy.  Dla punktów p, takich że region(p) == true,  brany jest obraz
+    this_way, zaś dla pozostałych – that_way.
+
+    Image lerp(Blend blend, Image this_way, Image that_way) – korzysta   z mie-
+    szanki,  która wyznacza  proporcje mieszania kolorów  dwóch obrazów właści-
+    wych, tworząc w ten sposób nowy. Dla każdego punktu p argument blend zwraca
+    parametr mieszania oznaczony jako w, który informuje,  ile w finalnym obra-
+    zie dla punktu p będzie koloru  z obrazu this_way,  a ile z obrazu that_way
+    (por.  argument  o nazwie w  metody weighted_mean  struktury Color  w pliku
+    color.h oraz poniższe funkcje darken i lighten).
+
+    Image darken(Image image, Blend blend) – ściemnia obraz.  Dla  szczególnego
+    przypadku blend tożsamościowo równego:
+      1 oznacza stworzenie czarnego obrazu,
+      0 oznacza kopię image.
+
+    Image lighten(Image image, Blend blend) – rozjaśnia obraz. Dla szczególnego
+    przypadku blend tożsamościowo równego:
+      1 oznacza stworzenie białego obrazu,
+      0 oznacza kopię image.
+
+                                      * * *
+
+Plik(i) functional.* powinien/powinny definiować szablony funkcji/funkcje  opi-
+sane poniżej.
+
+    auto compose(/* dowolna liczba argumentów */) – realizuje  złożenie funkcji
+    w następujący sposób:
+      compose()(x) == identyczność(x)
+      compose(f)(x) == f(x)
+      compose(f, g)(x) == g(f(x))
+      itd.
+
+    auto lift(H h, Fs... fs) – realizuje „pointwise lifting” w następujący spo-
+    sób:
+      lift(h)
+        a -> (p -> a)
+        h
+        Uwaga: h zwraca tutaj a.
+      lift(h, f1)
+        (a -> b) -> (p -> a) -> (p -> b)
+           h           f1
+      lift(h, f1, f2)
+        (a -> b -> g) -> (p -> a) -> (p -> b) -> (p -> g)
+              h             f1          f2
+      ...
+      lift(h, f1, ..., fn)
+        (a1 -> ... -> an -> d) -> (p -> a1) -> ... -> (p -> an) -> (p -> d)
+                  h                  f1                  fn
+      ...
+
+      Celem  wyjaśnienia   bardziej  szczegółowo  zostanie   opisany  przypadek
+      lift(h, f1, f2)
+        (a -> b -> g) -> (p -> a) -> (p -> b) -> (p -> g)
+              h             f1          f2
+      - Funkcja h przyjmuje argumenty a oraz b i zwraca wartość g.
+      - Funkcja f1 przyjmuje argument p i zwraca wartość a,  którą lift umiesz-
+        cza jako pierwszy argument faktyczny funkcji h.
+      - Funkcja f2  przyjmuje argument p i zwraca wartość b, którą lift umiesz-
+        cza jako drugi argument faktyczny funkcji h.
+      - Funkcja lift przyjmuje argumenty h, f1 oraz f2 i zwraca funkcję,  która
+        przyjmuje argument p i zwraca wartość g.
+      Nazwa „pointwise lifting” powinna w tym momencie wydawać się już bardziej
+      naturalna.
+
+                                      * * *
+
+W implementacji  ww. funkcji i szablonów funkcji  należy  wykorzystywać funkcje
+lambda języka C++.  W kodzie źródłowym images.* należy z kolei korzystać z sym-
+boli zdefiniowanych w functional.*.
+Nie należy korzystać  z instrukcji if oraz if–else.  W zamian za to można wyko-
+rzystać operator ternarny: warunek_logiczny ? a : b.
+Dodatkowe symbole (funkcje, struktury...) mogą się znaleźć  w pomocniczej prze-
+strzeni nazw Detail.
+
+Przykład użycia programu  można znaleźć  w pliku example.cc oraz w plikach gra-
+ficznych wygenerowanych przez example.cc.
+
+Rozwiązanie będzie kompilowane z użyciem polecenia:
+  g++ -Wall -Wextra -pedantic -O2 -std=c++20
+
+                                      * * *
+
+Rozwiązanie powinno zawierać pliki:
+  images.h,
+  images.cc (opcjonalnie),
+  functional.h,
+  functional.cc (opcjonalnie),
+które należy umieścić w repozytorium w katalogu
+  grupaN/zadanie7/ab123456
+gdzie N jest numerem grupy, a ab123456 jest identyfikatorem autora umieszczają-
+cego to rozwiązanie.  Katalog  z rozwiązaniem nie powinien zawierać innych pli-
+ków. Nie wolno umieszczać w repozytorium plików dużych, binarnych, tymczasowych
+(np. *.o) ani innych zbędnych. W szczególności do rozwiązania nie należy  dołą-
+czać plików graficznych (*.bmp).

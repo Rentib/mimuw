@@ -1,0 +1,92 @@
+Biblioteka standardowa języka C++ udostępnia implementacje wielu struktur
+danych, takich jak pair, vector, set, string, unordered_map, queue itp., a także
+implementacje podstawowych algorytmów, np. sort, max_element. Celem pierwszego
+zadania zaliczeniowe jest przećwiczenie korzystania z tej biblioteki.
+
+Napisać program obsługujący listę przebojów. Utwory, na które odbywa się
+głosowanie, są numerowane liczbami całkowitymi z przedziału od 1 do 99999999.
+Program czyta dane ze standardowego wejścia. Każda linia zawiera głos lub
+polecenie do wykonania.
+
+Prawidłowy głos to niepusta lista numerów utworów z przedziału od 1 do MAX,
+gdzie MAX jest maksymalnym numerem utworu, na który można głosować w danym
+notowaniu listy przebojów. Prawidłowy głos nie może zawierać numeru utworu,
+który wypadł z list przebojów. W prawidłowo oddanym głosie numery utworów muszą
+być parami różne.
+
+Program obsługuje pojedyncze notowania listy przebojów i podsumowania notowań.
+Zarówno notowanie, jak i podsumowanie obejmuje maksymalnie 7 najwyżej
+sklasyfikowanych utworów.
+
+Jeśli utwór był notowany w jakimś notowaniu listy przebojów i nie znalazł się
+w kolejnym notowaniu, to wypada z listy przebojów i nie można już więcej na
+niego głosować.
+
+Są dwa polecenia.
+
+NEW MAX
+
+Polecenie NEW zamyka dotychczasowe notowanie listy przebojów (jeśli jakieś było
+rozpoczęte) i rozpoczyna nowe notowanie z podaną wartością MAX, która jest
+z przedziału od 1 do 99999999 i musi być nie mniejsza niż wartość MAX
+z poprzedniego (właśnie zamykanego) głosowania. Polecenie to wypisuje na
+standardowe wyjście zamykane notowanie.
+
+TOP
+
+Polecenie TOP wypisuje na standardowe wyjście podsumowanie wszystkich
+dotychczasowych notowań. Podsumowanie jest wyznaczane w ten sposób, że sumowane
+są punkty uzyskane w dotychczasowych notowaniach. Utwór, który znalazł się na
+miejscu pierwszym, dostaje 7 punktów. Utwór, który znalazł się na miejscu
+drugim, dostaje 6 punktów itd. Utwór, który znalazł się na miejscu siódmym,
+dostaje jeden punkt. Polecenie to nie przerywa trwającego głosowania na bieżące
+notowanie listy przebojów.
+
+Oba polecenia wypisują co najwyżej 7 numerów utworów notowania lub podsumowania,
+podając dla każdego utworu jego numer oraz liczbę, o ile pozycji zmieniła się
+pozycja tego utworu w porównaniu odpowiednio z poprzednim notowaniem lub
+podsumowaniem, albo wypisując znak '-' (łącznik, minus), jeśli jest to nowość
+odpowiednio na liście lub w podsumowaniu.
+
+Jeśli dwa utwory dostały tyle samo głosów lub punktów, to wyższą pozycję zajmuje
+ten z mniejszym numerem.
+
+Poszczególne elementy linii z danymi wejściowymi są oddzielone białymi znakami,
+których może być dowolnie wiele i które mogą też występować na początku lub na
+końcu linii. Program ignoruje puste linie i linie zawierające wyłącznie białe
+znaki.
+
+Program na bieżąco sprawdza, czy dane wejściowe nie zawierają błędów. Dla każdej
+błędnej linii program wypisuje na standardowe wyjście diagnostyczne komunikat:
+
+Error in line N: <oryginalna postać błędnej linii>
+
+gdzie N oznacza numer linii. Linie są numerowane od 1, włączając w to ignorowane
+i błędne linie. Należy zwrócić uwagę na spację po dwukropku i na zachowanie
+w komunikacie oryginalnej postaci błędnej linii.
+
+Przykład użycia, pokazujący też wymagany format wypisywanych informacji,
+znajduje się w plikach test_1.in, test_1.out, test_1.err.
+
+Oczekiwane rozwiązanie nie powinno zawierać definicji własnych struktur i klas,
+a przynajmniej takich, które zawierają dane. Zamiast tego należy intensywnie
+korzystać z kontenerów i algorytmów dostarczanych przez standardową bibliotekę
+języka C++. Obsługę wejścia i wyjścia należy zrealizować za pomocą strumieni.
+
+Rozwiązanie należy umieścić w pliku top7.cc, który należy wstawić do
+repozytorium SVN w katalogu
+
+grupaN/zadanie1/ab123456+cd123456
+
+lub
+
+grupaN/zadanie1/ab123456+cd123456+ef123456
+
+gdzie N jest numerem grupy, a ab123456, cd123456, ef123456 są identyfikatorami
+członków zespołu umieszczającego to rozwiązanie. Katalog z rozwiązaniem nie
+powinien zawierać innych plików. Nie wolno umieszczać w repozytorium plików
+dużych, binarnych, tymczasowych (np. *.o) ani innych zbędnych.
+
+Rozwiązanie będzie kompilowane na maszynie students poleceniem
+
+g++ -Wall -Wextra -O2 -std=c++20 top7.cc -o top7
