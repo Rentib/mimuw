@@ -1,0 +1,158 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+\usepackage{enumerate}
+\usepackage[margin=.5in]{geometry} % zmniejsza margines
+\usepackage{tikz}
+\usepackage{array}
+
+\usetikzlibrary{positioning,graphs,fit,shapes,calc}
+\tikzset{}
+
+\newcommand{\MBBR}{\mathbb{R}}
+\newcommand{\MBBZ}{\mathbb{Z}}
+\newcommand{\MBBN}{\mathbb{N}}
+\newcommand{\MBBC}{\mathbb{C}}
+\newcommand{\MBBK}{\mathbb{K}}
+\newcommand{\MBBQ}{\mathbb{Q}}
+
+\title{SIK - Zadanie 3}
+\author{Stanisław Bitner}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Logiczne połączenie ruterów}
+
+\begin{center}
+\begin{tikzpicture}
+
+\begin{scope}[every node/.style={draw, minimum size = 7.5mm, fill=gray!40}]
+  \node[] (pigeon) at (0,0) {pigeon};
+  \node[] (R11) at (0,-2) {R11};
+  \node[] (R12) at (0,-4) {R12};
+  \node[] (R13) at (-3,-6) {R13};
+  \node[] (eagle) at (-3,-8) {eagle};
+  \node[] (R14) at (3,-6) {R14};
+  \node[] (kestrel) at (3,-8) {kestrel};
+\end{scope}
+
+\begin{scope}[every node/.style={font=\scriptsize}]
+  \draw (pigeon) -- node[left,pos=0.2]{eth0:222.67.1.27/24} node[left,pos=0.8]{eth0:207.13.56.91/24} node[midway,right]{\hspace{2pt} (7 hostów)}(R11);
+  \draw[dotted] ($(pigeon)!0.5!(R11)$) node[fill=white]{\dots} -- (R11);
+
+  \draw (R11) -- node[right, pos=0.2]{eth1: 209.85.127.1/24} node[right, pos=0.8]{eth0: 209.85.127.99/24} (R12);
+  \draw (R13) -- node[left, pos=0.2]{eth0: 64.157.174.44/8} node[left, pos=0.8]{eth1: 64.157.174.1/8} (R12);
+  \draw (R14) -- node[right, pos=0.2]{eth0: 72.12.47.61/8} node[right, pos=0.8]{eth2: 72.12.47.1/8} (R12);
+
+  \draw (R13) -- node[left,pos=0.2]{eth1:203.69.69.1/24} node[left,pos=0.8]{eth0:25.3.143.12/8} node[midway,right]{\hspace{2pt} (2 hosty)}(eagle);
+  \draw (R14) -- node[left,pos=0.2]{eth1:202.16.69.1/24} node[left,pos=0.8]{eth0:193.19.88.91/24} node[midway,right]{\hspace{2pt} (5 hostów)}(kestrel);
+  \draw[dotted] ($(R13)!0.5!(eagle)$) node[fill=white]{\dots} -- (eagle);
+  \draw[dotted] ($(R14)!0.5!(kestrel)$) node[fill=white]{\dots} -- (kestrel);
+\end{scope}
+
+\end{tikzpicture}
+\end{center}
+
+\section{Fragment tablicy tras rutera R12}
+
+\begin{center}
+\begin{tabular}{|
+  >{\centering}p{2.5cm}|
+  >{\centering}p{2.5cm}|
+  >{\centering}p{2.5cm}|
+  >{\centering\arraybackslash}p{2.5cm}
+|}
+  \hline
+  Cel           & Maska & Interfejs & Brama          \\
+  \hline
+  222.67.1.0    & /24   & eth0      & 209.85.127.1  \\
+  207.13.56.0   & /24   & ehh0      & 209.85.127.1  \\
+  209.85.127.0  & /24   & eth0      & 0.0.0.0       \\
+  64.0.0.0      & /8    & eth1      & 0.0.0.0       \\
+  203.69.69.0   & /24   & eth1      & 64.157.174.44 \\
+  25.3.143.0    & /8    & eth1      & 64.157.174.44 \\
+  72.0.0.0      & /8    & eth2      & 0.0.0.0       \\
+  202.16.69.0   & /24   & eth2      & 72.12.47.61   \\
+  193.19.88.0   & /24   & eth2      & 72.12.47.61   \\
+  \hline
+\end{tabular}
+\end{center}
+
+\clearpage
+\section{Wyniki polecenia tarceroute}
+
+\subsection{eagle.zad3sik.edu.pl}
+
+\begin{verbatim}
+traceroute to pigeon.zad3sik.edu.pl (25.3.143.12), 30 hops max, 60 byte packets
+  1  * * *
+  2  * * *
+  3  R13.zad3sik.edu.pl (203.69.69.1)
+  4  R12.zad3sik.edu.pl (64.157.174.1)
+  5  R11.zad3sik.edu.pl (209.85.127.1)
+  6  * * *
+  7  * * *
+  8  * * *
+  9  * * *
+ 10  * * *
+ 11  * * *
+ 12  * * *
+ 13  pigeon.zad3sik.edu.pl (222.67.1.27)
+\end{verbatim}
+
+\subsection{kestrel.zad3sik.edu.pl}
+
+\begin{verbatim}
+traceroute to pigeon.zad3sik.edu.pl (25.3.143.12), 30 hops max, 60 byte packets
+  1  * * *
+  2  * * *
+  3  * * *
+  4  * * *
+  5  * * *
+  6  R14.zad3sik.edu.pl (202.16.69.1)
+  7  R12.zad3sik.edu.pl (72.12.47.1)
+  8  R11.zad3sik.edu.pl (208.85.127.1)
+  9  * * *
+ 10  * * *
+ 11  * * *
+ 12  * * *
+ 13  * * *
+ 14  * * *
+ 15  * * *
+ 16  pigeon.zad3sik.edu.pl (222.67.1.27)
+\end{verbatim}
+
+\clearpage
+
+\section{Plik strefy zad3sik.edu.pl}
+
+\begin{verbatim}
+; Plik strefy dla domeny zad3sik.edu.pl
+$TTL 3600
+@       IN      SOA     ns1.zad3sik.edu.pl. root.zad3sik.edu.pl. (
+                        2023061001      ; Numer wersji
+                        3600            ; Czas odświeżania
+                        900             ; Czas powtórzeń
+                        604800          ; Czas wygaśnięcia
+                        86400           ; Czas minimum
+                        )
+        IN      NS      ns1.zad3sik.edu.pl.
+        IN      NS      ns2.zad3sik.edu.pl.
+
+ns1     IN      A       142.27.28.98
+ns2     IN      A       142.27.28.99
+pigeon  IN      A       222.67.1.27
+eagle   IN      A       25.3.143.12
+kestrel IN      A       193.19.88.91
+R11     IN      A       207.13.56.91
+R12     IN      A       209.85.127.99
+R13     IN      A       64.157.174.44
+R14     IN      A       72.12.47.61
+\end{verbatim}
+
+\end{document}

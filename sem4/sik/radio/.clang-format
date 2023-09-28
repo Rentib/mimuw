@@ -1,0 +1,11 @@
+BasedOnStyle: Google
+ColumnLimit: 80
+AlwaysBreakAfterReturnType: AllDefinitions
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterFunction: true
+IndentCaseLabels: false
+AlignConsecutiveMacros: true
+AlignTrailingComments: true
+AllowShortBlocksOnASingleLine: Empty
+QualifierAlignment: Left
