@@ -1,0 +1,250 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+\usepackage{enumerate}
+\usepackage[margin=.5in]{geometry} % zmniejsza margines
+\usepackage{fouriernc} % śmieszna czcionka
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+
+\title{Wydajność CUDA przy różnych ustawieniach jądra}
+\author{Stanisław Bitner - 438247}
+\date{2023}
+
+\begin{document}
+\maketitle
+
+\section*{Wstęp}
+Badanie dotyczy wydajności programów CUDA w zależności od konfiguracji jądra.
+Zostały wykonane pomiary wersji CPU (wersji referencyjnej) oraz GPU z jądrami
+jedno i dwuwymiarowymi.\\
+Do pomiarów zostały wykonane estymacje zbioru Mandelbrota na fragmencie
+przestrzeni zespolonej $\langle -2, -1.25 \rangle \langle 0.5, 1.25 \rangle$
+przybliżonej poprzez kwadraty $10^4 \times 10^4$ pixeli. W przypadku wersji CPU
+obrazki miały wymiary $10^3 \times 10^3$ pixeli, a czasy zostały przemnożone
+razy $100$. Dla każdego punktu (pixela) zostały wykonane co najwyżej $256$
+iteracje\\
+Wyniki dla każdej konfiguracji zostały zebrane na podstawie 17 wykonań, dla
+których czas wersji referencyjnej różnił się od jej typowego czasu o co
+najwyżej $1\%$. Jako typowy czas wersji CPU przyjąłem medianę czasów $17$
+uruchomień dokonanych przed właściwymi pomiarami.
+
+\section*{Implementacja}
+
+\subsection*{CPU}
+\begin{lstlisting}[language = C++]
+void computeMandelbrotCPU(int *image, int width, int height, int iterations,
+                          double x0, double y0, double x1, double y1)
+{
+  double dx = (x1 - x0) / width;
+  double dy = (y1 - y0) / height;
+  int row, column, iteration = 0;
+  double zx, zy, tmpx, x, y;
+
+  for (int pixel = 0; pixel < width * height; ++pixel, iteration = 0) {
+    row = pixel / width;
+    column = pixel % width;
+
+    x = column * dx + x0, y = row * dy + y0;
+    zx = 0, zy = 0;
+
+    while (++iteration < iterations && zx * zx + zy * zy < 4.0) {
+      tmpx = zx * zx - zy * zy + x;
+      zy = 2 * zx * zy + y;
+      zx = tmpx;
+    }
+
+    image[pixel] = iteration;
+  }
+}
+\end{lstlisting}
+
+\subsection*{Kernel 1D}
+\begin{lstlisting}[language = C++]
+__global__ void computeMandelbrot(int *image, int width, int height,
+                                  int iterations, double x0, double y0,
+                                  double x1, double y1)
+{
+  int pixel = blockDim.x * blockIdx.x + threadIdx.x;
+  if (pixel >= width * height) return;
+
+  double dx = (x1 - x0) / (double)width;
+  double dy = (y1 - y0) / (double)height;
+
+  int row = pixel / width, column = pixel % width, iteration = 0;
+
+  double x = column * dx + x0, y = row * dy + y0;
+  double zx = 0, zy = 0, tmpx;
+
+  while (++iteration < iterations && zx * zx + zy * zy < 4.0) {
+    tmpx = zx * zx - zy * zy + x;
+    zy = 2 * zx * zy + y;
+    zx = tmpx;
+  }
+
+  image[pixel] = iteration;
+}
+\end{lstlisting}
+
+\subsection*{Kernel 2D}
+\begin{lstlisting}[language = C++]
+__global__ void computeMandelbrot2d(int *image, int width, int height,
+                                    int iterations, double x0, double y0,
+                                    double x1, double y1)
+{
+  int pixel = (gridDim.x * blockIdx.y + blockIdx.x) * blockDim.x * blockDim.y
+            + threadIdx.y * blockDim.x + threadIdx.x;
+  if (pixel >= width * height) return;
+
+  double dx = (x1 - x0) / (double)width;
+  double dy = (y1 - y0) / (double)height;
+
+  int row = pixel / width, column = pixel % width, iteration = 0;
+
+  double x = column * dx + x0, y = row * dy + y0;
+  double zx = 0, zy = 0, tmpx;
+
+  while (++iteration < iterations && zx * zx + zy * zy < 4.0) {
+    tmpx = zx * zx - zy * zy + x;
+    zy = 2 * zx * zy + y;
+    zx = tmpx;
+  }
+
+  image[pixel] = iteration;
+}
+\end{lstlisting}
+
+\section*{Wyniki}
+
+\begin{center}
+\begin{tabular}{|p{2.21cm}|p{2.7cm}|p{2.5cm}|p{2.5cm}|p{2.9cm}|}
+    \hline
+    \rowcolor{gray}
+    \textbf{Konfiguracja \newline kernela} & \textbf{Typowy \newline czas wykonania (ms)} & \textbf{Minimalny czas wykonania (ms)} & \textbf{Średni \newline czas wykonania \newline (ms)} & \textbf{Przyspieszenie względem \newline wersji \newline referencyjnej}\\
+    \hline
+    CPU & $32800$ & $32500$ & $32811.8\pm8.1$ & $1$\\
+    \hline
+    $32$ & $178$ & $165$ & $179.294\pm4$ & $184.115\pm3.2$\\
+    \hline
+    $64$ & $113$ & $112$ & $115.941\pm2.1$ & $284.122\pm4.1$\\
+    \hline
+    $128$ & $109$ & $106$ & $109.588\pm1.3$ & $299.93\pm3$\\
+    \hline
+    $256$ & $115$ & $114$ & $115.706\pm0.39$ & $283.628\pm0.94$\\
+    \hline
+    $512$ & $122$ & $115$ & $121.706\pm0.5$ & $269.672\pm1.2$\\
+    \hline
+    $1024$ & $127$ & $118$ & $126.765\pm0.61$ & $258.939\pm1.4$\\
+    \hline
+\end{tabular}
+
+\begin{tabular}{|p{1.1cm}|p{1.11cm}|p{2.7cm}|p{2.5cm}|p{2.5cm}|p{2.9cm}|}
+    \hline
+    \rowcolor{gray}
+    \multicolumn{2}{|p{2.65cm}|}{\textbf{Konfiguracja \newline kernela}} & \textbf{Typowy \newline czas wykonania (ms)} & \textbf{Minimalny czas wykonania (ms)} & \textbf{Średni \newline czas wykonania \newline (ms)} & \textbf{Przyspieszenie względem \newline wersji \newline referencyjnej}\\
+    \rowcolor{gray}
+    \hline
+    X & Y & & & & \\
+    \hline
+    \multicolumn{2}{|p{2.65cm}|}{CPU} & $32800$ & $32500$ & $32811.8\pm8.1$ & $1$\\
+    \hline
+    $256$ & $1$ & $119$ & $113$ & $118.588\pm0.45$ & $276.751\pm1.1$\\
+    \hline
+    $128$ & $2$ & $117$ & $115$ & $116.941\pm0.28$ & $280.61\pm0.7$\\
+    \hline
+    $64$ & $4$ & $117$ & $115$ & $117\pm0.29$ & $280.47\pm0.72$\\
+    \hline
+    $32$ & $8$ & $118$ & $117$ & $117.765\pm0.19$ & $278.633\pm0.46$\\
+    \hline
+    $16$ & $16$ & $118$ & $117$ & $117.882\pm0.23$ & $278.36\pm0.56$\\
+    \hline
+    $8$ & $32$ & $118$ & $117$ & $117.765\pm0.19$ & $278.633\pm0.46$\\
+    \hline
+    $4$ & $64$ & $118$ & $117$ & $117.647\pm0.12$ & $278.905\pm0.33$\\
+    \hline
+    $2$ & $128$ & $118$ & $117$ & $117.706\pm0.12$ & $278.765\pm0.32$\\
+    \hline
+    $1$ & $256$ & $118$ & $117$ & $117.706\pm0.12$ & $278.765\pm0.32$\\
+    \hline
+\end{tabular}
+
+\begin{tabular}{|p{1.1cm}|p{1.11cm}|p{2.7cm}|p{2.5cm}|p{2.5cm}|p{2.9cm}|}
+    \hline
+    \rowcolor{gray}
+    \multicolumn{2}{|p{2.65cm}|}{\textbf{Konfiguracja \newline kernela}} & \textbf{Typowy \newline czas wykonania (ms)} & \textbf{Minimalny czas wykonania (ms)} & \textbf{Średni \newline czas wykonania \newline (ms)} & \textbf{Przyspieszenie względem \newline wersji \newline referencyjnej}\\
+    \rowcolor{gray}
+    \hline
+    X & Y & & & & \\
+    \hline
+    \multicolumn{2}{|p{2.65cm}|}{CPU} & $32800$ & $32500$ & $32811.8\pm8.1$ & $1$\\
+    \hline
+    $1024$ & $1$ & $124$ & $123$ & $123.941\pm0.11$ & $264.74\pm0.23$\\
+    \hline
+    $512$ & $2$ & $124$ & $121$ & $123.118\pm0.27$ & $266.529\pm0.62$\\
+    \hline
+    $256$ & $4$ & $122$ & $119$ & $122.118\pm0.3$ & $268.715\pm0.66$\\
+    \hline
+    $128$ & $8$ & $122$ & $119$ & $121.118\pm0.3$ & $270.935\pm0.7$\\
+    \hline
+    $64$ & $16$ & $122$ & $119$ & $121.118\pm0.32$ & $270.94\pm0.76$\\
+    \hline
+    $32$ & $32$ & $122$ & $119$ & $121.412\pm0.49$ & $270.322\pm1.2$\\
+    \hline
+    $16$ & $64$ & $122$ & $120$ & $121.765\pm0.14$ & $269.474\pm0.31$\\
+    \hline
+    $8$ & $128$ & $122$ & $120$ & $121.765\pm0.14$ & $269.474\pm0.31$\\
+    \hline
+    $4$ & $256$ & $122$ & $121$ & $121.941\pm0.11$ & $269.082\pm0.24$\\
+    \hline
+    $2$ & $512$ & $122$ & $119$ & $121.941\pm0.27$ & $269.099\pm0.59$\\
+    \hline
+    $1$ & $1024$ & $122$ & $119$ & $121.529\pm0.33$ & $270.021\pm0.73$\\
+    \hline
+\end{tabular}
+
+\begin{tabular}{|p{1.1cm}|p{1.11cm}|p{2.7cm}|p{2.5cm}|p{2.5cm}|p{2.9cm}|}
+    \hline
+    \rowcolor{gray}
+    \multicolumn{2}{|p{2.65cm}|}{\textbf{Konfiguracja \newline kernela}} & \textbf{Typowy \newline czas wykonania (ms)} & \textbf{Minimalny czas wykonania (ms)} & \textbf{Średni \newline czas wykonania \newline (ms)} & \textbf{Przyspieszenie względem \newline wersji \newline referencyjnej}\\
+    \rowcolor{gray}
+    \hline
+    X & Y & & & & \\
+    \hline
+    \multicolumn{2}{|p{2.65cm}|}{CPU} & $32800$ & $32500$ & $32811.8\pm8.1$ & $1$\\
+    \hline
+    $32$ & $32$ & $122$ & $120$ & $121.588\pm0.2$ & $269.871\pm0.44$\\
+    \hline
+    $16$ & $16$ & $116$ & $115$ & $116\pm0.15$ & $282.867\pm0.37$\\
+    \hline
+    $8$ & $8$ & $123$ & $120$ & $122.471\pm0.2$ & $267.927\pm0.45$\\
+    \hline
+    $32$ & $16$ & $119$ & $117$ & $119.176\pm0.2$ & $275.333\pm0.47$\\
+    \hline
+    $64$ & $8$ & $119$ & $117$ & $119\pm0.28$ & $275.753\pm0.65$\\
+    \hline
+    $8$ & $64$ & $119$ & $117$ & $118.882\pm0.29$ & $276.028\pm0.69$\\
+    \hline
+    $16$ & $32$ & $119$ & $117$ & $119.059\pm0.27$ & $275.615\pm0.63$\\
+    \hline
+\end{tabular}
+\end{center}
+
+\section*{Wnioski}
+Bazując na uzyskanych wynikach, można zauważyć, że najlepiej wypada jądro
+jednowymiarowe z blokami o $128$ wątkach. Najgorzej jest w przypadku $32$
+wątków na blok.\\
+Nie ma znaczącej różnicy między jądrami dwuwymiarowymi $x\times y$ oraz $y
+\times x$, co może sugerować, że są one równie efektywne.\\ W przypadku
+jednowymiarowych jąder fluktuacje maleją wraz ze spadkiem wartości funkcji
+$f(x) = |256 - x|$, co wskazuje na potrzebę przyjęcia odpowiedniej liczby
+wątków na blok -- liczba ta nie może być za mała, ani za duża.\\
+Warto też zwrócić uwagę na znacząco lepszą efektywność jąder jednowymiarowych
+w stosunku do dwuwymiarowych.\\
+Fluktuacje w wykonaniach poszczególnych wersji kernala oraz wersji CPU mogą
+być powodowane różnym obciążeniem procesora i karty graficznej.
+
+\end{document}

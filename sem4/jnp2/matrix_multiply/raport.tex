@@ -1,0 +1,221 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}
+\usepackage{amsfonts,amsmath,amssymb,amsthm}
+\usepackage{enumerate}
+\usepackage[margin=.5in]{geometry} % zmniejsza margines
+\usepackage{fouriernc} % śmieszna czcionka
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage[table]{xcolor}
+
+\title{Wydajność CUDA przy różnych ustawieniach jądra}
+\author{Stanisław Bitner - 438247}
+\date{2023}
+
+\begin{document}
+\maketitle
+
+\section*{Wstęp}
+
+Ten raport techniczny porównuje wydajność różnych wersji algorytmów mnożenia
+macierzy w technologii CUDA. Zostały dokonane pomiary czasu wykonania dla
+różnych wariantów algorytmów mnożenia macierzy w CUDA, w celu zidentyfikowania
+najwydajniejszej implementacji.\\
+W celach wykonania pomiarów każda wersja została uruchomiona 17 razy z takimi
+samymi macierzami o losowych wartościach i rozmiarach $1000 \times 1000$. Aby
+wyeliminować obserwacje odstające, które znacznie zmieniłyby wyniki -- zostały
+powtórzone wykonania, w których wersja CPU różniła się od mediany
+17 wcześniejszych wykonań o więcej niż 1\%.
+
+\section*{Wyniki}
+
+\begin{center}
+\begin{tabular}{|p{2.9cm}|p{2.7cm}|p{5cm}|p{3.5cm}|p{5cm}|}
+    \hline
+    \rowcolor{gray}
+\textbf{Wersja kodu} & 
+\textbf{Konfiguracja \newline kernela} & 
+\textbf{Średni \newline czas wykonania \newline (ms)} & 
+\textbf{Średnie \newline przyspieszenie \newline względem \newline wersji CPU}\\
+CPU & --- & $5731.49 \pm 10.55$ & --- \\
+    \hline
+Kernel \#1 & $8 \times 8$ & $55.17 \pm 0.076$ & $103.90 \pm 0.20$ \\
+    \hline
+Kernel \#1 & $16 \times 16$ & $97.89\pm 0.14$ & $58.56\pm 0.11$ \\
+    \hline
+Kernel \#1 & $32 \times 32$ & $189.078 \pm 0.20$ & $30.32\pm 0.056$ \\
+    \hline
+Kernel \#2 & $32 \times 1$ & $112.76 \pm 0.12$ & $50.84\pm 0.10$ \\
+    \hline
+Kernel \#2 & $64 \times 1$ & $289.49 \pm 0.35$ & $19.80\pm 0.041$ \\
+    \hline
+Kernel \#2 & $96 \times 1$ & $429.52 \pm 0.58$ & $13.35\pm 0.039$ \\
+    \hline
+Kernel \#2 & $128 \times 1$ & --- & --- \\
+    \hline
+Kernel \#3 & $32 \times 1$ & $20.31\pm 0.015$ & $282.29\pm 0.52$ \\
+    \hline
+Kernel \#3 & $64 \times 1$ & $22.69\pm 0.19$ & $252.71 \pm 0.47$ \\
+    \hline
+Kernel \#4 & $32 \times 1$ & $19.092\pm 0.032$ & $300.26\pm 0.56$ \\
+    \hline
+Kernel \#5 & $32 \times 1$ & $10.31\pm 0.013$ & $556.31\pm 1.031$ \\
+    \hline
+\end{tabular}
+\end{center}
+
+\section*{Wnioski}
+Pierwsze co rzuca się w oczy, to brak wyników dla jądra w wersji drugiej
+z konfiguracją $128 \times 1$ -- okazuje się, że istnieje dość niewielkie
+ograniczenie na rozmiar dzielonej między wątkami pamięci i taka konfiguracja go
+przekracza.\\
+Poza tym zgodnie z przewidywaniami najlepiej sprawdza się piąta wersja jądra,
+która w największym stopniu korzysta z rejestrów.\\
+Interesujące może być także to, że wersja druga okazała się wolniejsza niż
+wersja pierwsza jądra bezpośrednio wzorowana na wersji CPU. Trzecia wersja,
+która prawie nie różni się od drugiej wypadła ponad pięciokrotnie lepiej i nie
+różniła się znacząco w szybkości działania od czwartej wersji.\\
+Uzyskane wyniki (szybsze wykonanie dla kernela \#2 dla mniejszej liczby wątków
+w bloku) odbiegają od oczekiwanych. W celu ich ustalenia wymagane są dalsze,
+bardziej szczegółowe badania.
+
+\section*{Implementacja}
+
+\subsection*{CPU}
+\begin{lstlisting}[language = C++]
+template <size_t N>
+void matrix_multiply_cpu(real *A, real *B, real *C)
+{
+  for (size_t x = 0; x < N; ++x) {
+    for (size_t y = 0; y < N; ++y) {
+      real sum = 0.0;
+      for (size_t k = 0; k < N; ++k) sum += A[x * N + k] * B[k * N + y];
+      C[x * N + y] = sum;
+    }
+  }
+}
+\end{lstlisting}
+
+\subsection*{Kernel \#1}
+\begin{lstlisting}[language = C++]
+template <size_t N>
+__global__ void matrix_multiply_gpu1(real *A, real *B, real *C)
+{
+  size_t i = blockIdx.x * blockDim.x + threadIdx.x;
+  size_t j = blockIdx.y * blockDim.y + threadIdx.y;
+  if (i >= N || j >= N) return;
+  real sum = 0.0;
+  for (size_t k = 0; k < N; ++k) sum += A[i * N + k] * B[k * N + j];
+  C[i * N + j] = sum;
+}
+\end{lstlisting}
+
+\subsection*{Kernel \#2 i Kernel \#3}
+\begin{lstlisting}[language = C++]
+template <size_t N, size_t size1, bool isv3>
+__global__ void matrix_multiply_gpu23(real *A, real *B, real *C)
+{
+  constexpr size_t size2 = isv3 ? size1 + 1 : size1;
+  __shared__ real res[size1 * size2];
+  __shared__ real row[size1];
+
+  size_t tx = threadIdx.x;
+  size_t bx = blockIdx.x * size1;
+  size_t by = blockIdx.y * size1;
+
+  for (size_t i = 0; i < size1; ++i) res[i * size2 + tx] = 0;
+  res[tx * size2 + tx] = 1;
+  __syncthreads();
+
+  size_t x = bx + tx;
+  size_t y = by + tx;
+  for (size_t k = 0; k < N; ++k) {
+    row[tx] = x < N ? B[k * N + x] : 0;
+    __syncthreads();
+
+    real col = y < N ? A[y * N + k] : 0;
+    __syncthreads();
+
+    for (size_t i = 0; i < size1; ++i) res[tx * size2 + i] += col * row[i];
+    __syncthreads();
+  }
+  __syncthreads();
+
+  for (int i = 0; i < size1; ++i) {
+    if (y < N && bx + i < N) C[y * N + bx + i] = res[tx * size2 + i];
+  }
+  __syncthreads();
+}
+\end{lstlisting}
+
+\subsection*{Kernel \#4}
+\begin{lstlisting}[language = C++]
+template <size_t N, size_t size>
+__global__ void matrix_multiply_gpu4(real *A, real *B, real *C)
+{
+  __shared__ real res[size * size];
+
+  size_t tx = threadIdx.x;
+  size_t bx = blockIdx.x * size;
+  size_t by = blockIdx.y * size;
+
+  for (size_t i = 0; i < size; ++i) res[i * size + tx] = 0;
+
+  size_t x = bx + tx;
+  size_t y = by + tx;
+  for (size_t k = 0; k < N; ++k) {
+    real row = x < N ? B[k * N + x] : 0;
+    __syncthreads();
+
+    real col = y < N ? A[y * N + k] : 0;
+    __syncthreads();
+
+    for (size_t i = 0; i < size; ++i)
+      res[tx * size + i] += col * __shfl_sync(0xFFFFFFFF, row, i);
+    __syncthreads();
+  }
+
+  for (size_t i = 0; i < size; ++i) {
+    if (y < N && bx + i < N) C[y * N + bx + i] = res[tx * size + i];
+  }
+  __syncthreads();
+}
+\end{lstlisting}
+
+\subsection*{Kernel \#5}
+\begin{lstlisting}[language = C++]
+template <size_t N, size_t size>
+__global__ void __launch_bounds__(32)
+    matrix_multiply_gpu5(real *A, real *B, real *C)
+{
+  real res[size] = {0};
+  size_t tx = threadIdx.x;
+  size_t bx = blockIdx.x * size;
+  size_t by = blockIdx.y * size;
+
+  size_t x = bx + tx;
+  size_t y = by + tx;
+  for (size_t k = 0; k < N; ++k) {
+    real row = x < N ? B[k * N + x] : 0;
+    __syncthreads();
+
+    real col = y < N ? A[y * N + k] : 0;
+    __syncthreads();
+
+#pragma unroll
+    for (size_t i = 0; i < size; ++i)
+      res[i] += col * __shfl_sync(0xffffffff, row, i);
+  }
+
+#pragma unroll
+  for (size_t i = 0; i < size; ++i) {
+    if (y < N && bx + i < N) C[y * N + bx + i] = res[i];
+  }
+  __syncthreads();
+}
+\end{lstlisting}
+
+\end{document}
