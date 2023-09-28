@@ -1,0 +1,599 @@
+diff -rupNEZbB original/usr/src/minix/include/minix/callnr.h solve/usr/src/minix/include/minix/callnr.h
+--- original/usr/src/minix/include/minix/callnr.h	2014-09-13 23:56:50.000000000 +0200
++++ solve/usr/src/minix/include/minix/callnr.h	2023-06-18 10:05:13.939655785 +0200
+@@ -118,7 +118,9 @@
+ #define VFS_COPYFD		(VFS_BASE + 46)
+ #define VFS_CHECKPERMS		(VFS_BASE + 47)
+ #define VFS_GETSYSINFO		(VFS_BASE + 48)
++#define VFS_EXCLUSIVE		(VFS_BASE + 49)
++#define VFS_FEXCLUSIVE		(VFS_BASE + 50)
+ 
+-#define NR_VFS_CALLS		49	/* highest number from base plus one */
++#define NR_VFS_CALLS		51	/* highest number from base plus one */
+ 
+ #endif /* !_MINIX_CALLNR_H */
+diff -rupNEZbB original/usr/src/minix/include/minix/ipc.h solve/usr/src/minix/include/minix/ipc.h
+--- original/usr/src/minix/include/minix/ipc.h	2014-09-13 23:56:50.000000000 +0200
++++ solve/usr/src/minix/include/minix/ipc.h	2023-06-18 10:05:13.952989118 +0200
+@@ -842,6 +842,16 @@ typedef struct {
+ _ASSERT_MSG_SIZE(mess_lc_vfs_umount);
+ 
+ typedef struct {
++	int fd;
++	vir_bytes name;
++	size_t len;
++	int flags;
++
++	uint8_t padding[40];
++} mess_lc_vfs_exclusive;
++_ASSERT_MSG_SIZE(mess_lc_vfs_exclusive);
++
++typedef struct {
+ 	void		*addr;
+ 	uint8_t		padding[52];
+ } mess_lc_vm_brk;
+@@ -2121,6 +2131,7 @@ typedef struct {
+ 		mess_lc_vfs_truncate	m_lc_vfs_truncate;
+ 		mess_lc_vfs_umask	m_lc_vfs_umask;
+ 		mess_lc_vfs_umount	m_lc_vfs_umount;
++		mess_lc_vfs_exclusive	m_lc_vfs_exclusive;
+ 		mess_lc_vm_brk		m_lc_vm_brk;
+ 		mess_lc_vm_getphys	m_lc_vm_getphys;
+ 		mess_lc_vm_rusage	m_lc_vm_rusage;
+diff -rupNEZbB original/usr/src/minix/servers/vfs/const.h solve/usr/src/minix/servers/vfs/const.h
+--- original/usr/src/minix/servers/vfs/const.h	2014-09-13 23:56:50.000000000 +0200
++++ solve/usr/src/minix/servers/vfs/const.h	2023-06-18 10:05:13.962989118 +0200
+@@ -7,6 +7,7 @@
+ #define NR_MNTS           16 	/* # slots in mount table */
+ #define NR_VNODES       1024	/* # slots in vnode table */
+ #define NR_WTHREADS	   9	/* # slots in worker thread table */
++#define NR_EXCLUSIVE	8	/* # slots in the exclusive locking table */
+ 
+ #define NR_NONEDEVS	NR_MNTS	/* # slots in nonedev bitmap */
+ 
+diff -rupNEZbB original/usr/src/minix/servers/vfs/exclusive.c solve/usr/src/minix/servers/vfs/exclusive.c
+--- original/usr/src/minix/servers/vfs/exclusive.c	1970-01-01 01:00:00.000000000 +0100
++++ solve/usr/src/minix/servers/vfs/exclusive.c	2023-06-18 23:56:10.096088435 +0200
+@@ -0,0 +1,238 @@
++#include "fs.h"
++
++#include <minix/vfsif.h>
++#include <sys/fcntl.h>
++#include <sys/stat.h>
++
++#include "const.h"
++#include "file.h"
++#include "glo.h"
++#include "path.h"
++#include "fproc.h"
++#include "proto.h"
++#include "vnode.h"
++#include "scratchpad.h"
++
++static struct exclusive_lock {
++  struct vnode *vp;
++  uid_t uid;
++  pid_t pid;
++  int fd;
++} locks[NR_EXCLUSIVE];
++
++static int excl_generic(struct vnode *vp, int fd, int flags);
++
++int
++do_exclusive(void)
++{
++  vir_bytes vname;
++  size_t vname_length;
++  int flags;
++
++  int r;
++  struct vnode *vp;
++  struct vmnt *vmp;
++  char fullpath[PATH_MAX];
++  struct lookup resolve;
++
++  vname = job_m_in.m_lc_vfs_exclusive.name;
++  vname_length = job_m_in.m_lc_vfs_exclusive.len;
++  flags = job_m_in.m_lc_vfs_exclusive.flags;
++
++  lookup_init(&resolve, fullpath, PATH_NOFLAGS, &vmp, &vp);
++  resolve.l_vmnt_lock = VMNT_READ;
++  resolve.l_vnode_lock = VNODE_WRITE;
++
++  /* Temporarily open file */
++  if (fetch_name(vname, vname_length, fullpath) != OK) return(EINVAL);
++  if ((vp = eat_path(&resolve, fp)) == NULL) return(EINVAL);
++
++  if (forbidden(fp, vp, W_BIT) != OK && forbidden(fp, vp, R_BIT) != OK) {
++    r = EACCES;
++    goto end;
++  }
++
++  if (S_ISREG(vp->v_mode) == 0) {
++    r = EFTYPE;
++    goto end;
++  }
++
++  r = excl_generic(vp, -1, flags);
++
++end:
++  unlock_vnode(vp);
++  unlock_vmnt(vmp);
++  put_vnode(vp);
++  return(r);
++}
++
++int
++do_fexclusive(void)
++{
++  int fd;
++  int flags;
++
++  int r;
++  struct filp *rfilp;
++  struct vnode *vp;
++
++  fd = job_m_in.m_lc_vfs_exclusive.fd;
++  flags = job_m_in.m_lc_vfs_exclusive.flags;
++
++  scratch(fp).file.fd_nr = fd;
++
++  if ((rfilp = get_filp(scratch(fp).file.fd_nr, VNODE_WRITE)) == NULL
++  &&  (rfilp = get_filp(scratch(fp).file.fd_nr, VNODE_READ)) == NULL)
++    return EINVAL;
++
++  vp = rfilp->filp_vno;
++
++  if (!(rfilp->filp_mode & (W_BIT | R_BIT))) {
++    r = EBADF;
++    goto end;
++  }
++
++  if (S_ISREG(vp->v_mode) == 0) {
++    r = EFTYPE;
++    goto end;
++  }
++
++  r = excl_generic(vp, fd, flags);
++end:
++  unlock_filp(rfilp);
++  return(r);
++}
++
++int
++excl_generic(struct vnode *vp, int fd, int flags)
++{
++  unsigned i, j;
++
++  switch (flags) {
++  case EXCL_LOCK_NO_OTHERS: {
++    for (i = 0; i < NR_PROCS; ++i) {
++      if (fproc[i].fp_realuid == fp->fp_realuid) continue;
++      for (j = 0; j < OPEN_MAX; ++j) {
++        if (fproc[i].fp_filp[j]
++        &&  fproc[i].fp_filp[j]->filp_vno->v_inode_nr == vp->v_inode_nr) {
++          return EAGAIN;
++        }
++      }
++    }
++  } /* fallthrough */
++  case EXCL_LOCK: {
++    for (i = 0; i < NR_EXCLUSIVE; ++i) {
++      if (locks[i].vp && vp->v_inode_nr == locks[i].vp->v_inode_nr)
++        return EALREADY;
++    }
++    for (i = 0; i < NR_EXCLUSIVE; ++i) {
++      if (!locks[i].vp) {
++        locks[i].vp = vp;
++        locks[i].uid = fp->fp_realuid;
++        locks[i].fd = fd;
++        locks[i].pid = fp->fp_pid;
++        dup_vnode(vp);
++        return OK;
++      }
++    }
++    return ENOLCK;
++  } break;
++  case EXCL_UNLOCK: {
++    for (i = 0; i < NR_EXCLUSIVE; ++i) {
++      if (locks[i].vp && vp->v_inode_nr == locks[i].vp->v_inode_nr) {
++        if (locks[i].uid != fp->fp_realuid) return EPERM;
++        /* put_vnode(vp); */
++        vp->v_ref_count--; // TODO: check if this is ok
++        locks[i].vp = NULL;
++        locks[i].fd = -1;
++        locks[i].pid = -1;
++        return OK;
++      }
++    }
++  } break;
++  case EXCL_UNLOCK_FORCE: {
++    for (i = 0; i < NR_EXCLUSIVE; ++i) {
++      if (locks[i].vp && vp->v_inode_nr == locks[i].vp->v_inode_nr) {
++        if (fp->fp_realuid != SU_UID && locks[i].uid != fp->fp_realuid
++        &&  fp->fp_realuid != locks[i].vp->v_uid)
++          return EPERM;
++        /* put_vnode(vp); */
++        vp->v_ref_count--; // TODO: check if this is ok
++        locks[i].vp = NULL;
++        locks[i].fd = -1;
++        locks[i].pid = -1;
++        return OK;
++      }
++    }
++  } break;
++  }
++  return EINVAL;
++}
++
++void
++excl_set_deleted(struct vnode *vp, int flag)
++{
++  unsigned i;
++  if (!vp) return;
++  for (i = 0; i < NR_LOCKS; ++i) {
++    if (locks[i].vp && locks[i].fd == -1) {
++      if (vp->v_inode_nr == locks[i].vp->v_inode_nr)
++        locks[i].fd = flag;
++    }
++  }
++}
++
++void
++excl_remove(struct vnode *vp)
++{
++  unsigned i;
++  if (!vp) return;
++  for (i = 0; i < NR_LOCKS; ++i) {
++    if (locks[i].vp && vp->v_inode_nr == locks[i].vp->v_inode_nr) {
++      locks[i].vp->v_ref_count--;
++      locks[i].vp = NULL;
++      locks[i].fd = -1;
++      locks[i].pid = -1;
++    }
++  }
++}
++
++void
++excl_remove_deleted(struct vnode *vp)
++{
++  unsigned i;
++  for (i = 0; i < NR_LOCKS; ++i) {
++    if (locks[i].vp && locks[i].fd == -2 && vp->v_ref_count == 2) {
++      locks[i].vp->v_ref_count--;
++      locks[i].vp = NULL;
++      locks[i].fd = -1;
++      locks[i].pid = -1;
++    }
++  }
++}
++
++int
++excl_who_locked(struct vnode *vp)
++{
++  unsigned i;
++  if (!vp) return -1;
++  for (i = 0; i < NR_LOCKS; ++i) {
++    if (locks[i].vp && vp->v_inode_nr == locks[i].vp->v_inode_nr)
++      return locks[i].uid;
++  }
++  return -1;
++}
++
++void
++excl_unlock_fd(int fd, pid_t pid)
++{
++  unsigned i;
++  for (i = 0; i < NR_LOCKS; ++i) {
++    if (locks[i].vp && locks[i].fd == fd && locks[i].pid == pid) {
++      locks[i].vp->v_ref_count--; // TODO: check if this is ok
++      locks[i].vp = NULL;
++      locks[i].fd = -1;
++      locks[i].pid = -1;
++    }
++  }
++}
+diff -rupNEZbB original/usr/src/minix/servers/vfs/link.c solve/usr/src/minix/servers/vfs/link.c
+--- original/usr/src/minix/servers/vfs/link.c	2014-09-13 23:56:50.000000000 +0200
++++ solve/usr/src/minix/servers/vfs/link.c	2023-06-18 23:43:18.759446828 +0200
+@@ -128,15 +128,27 @@ int do_unlink(void)
+ 	return(r);
+   }
+ 
+-  /* Also, if the sticky bit is set, only the owner of the file or a privileged
+-     user is allowed to unlink */
+-  if ((dirp->v_mode & S_ISVTX) == S_ISVTX) {
+ 	/* Look up inode of file to unlink to retrieve owner */
+ 	lookup_init(&stickycheck, resolve.l_path, PATH_RET_SYMLINK, &vmp2, &vp);
+ 	stickycheck.l_vmnt_lock = VMNT_READ;
+ 	stickycheck.l_vnode_lock = VNODE_READ;
+ 	vp = advance(dirp, &stickycheck, fp);
+ 	assert(vmp2 == NULL);
++
++  if (excl_who_locked(vp) != -1 && excl_who_locked(vp) != fp->fp_realuid) {
++    unlock_vnode(vp);
++    put_vnode(vp);
++    unlock_vnode(dirp);
++    unlock_vmnt(vmp);
++    put_vnode(dirp);
++    return EACCES;
++  }
++
++  excl_set_deleted(vp, -2);
++
++  /* Also, if the sticky bit is set, only the owner of the file or a privileged
++     user is allowed to unlink */
++  if ((dirp->v_mode & S_ISVTX) == S_ISVTX) {
+ 	if (vp != NULL) {
+ 		if (vp->v_uid != fp->fp_effuid && fp->fp_effuid != SU_UID)
+ 			r = EPERM;
+@@ -150,6 +162,9 @@ int do_unlink(void)
+ 		put_vnode(dirp);
+ 		return(r);
+ 	}
++  } else if (vp) {
++    unlock_vnode(vp);
++    put_vnode(vp);
+   }
+ 
+   upgrade_vmnt_lock(vmp);
+@@ -171,11 +186,11 @@ int do_rename(void)
+ {
+ /* Perform the rename(name1, name2) system call. */
+   int r = OK, r1;
+-  struct vnode *old_dirp = NULL, *new_dirp = NULL, *new_dirp_l = NULL, *vp;
+-  struct vmnt *oldvmp, *newvmp, *vmp2;
++  struct vnode *old_dirp = NULL, *new_dirp = NULL, *new_dirp_l = NULL, *vp, *vp2;
++  struct vmnt *oldvmp, *newvmp, *vmp2, *vmp22;
+   char old_name[PATH_MAX];
+   char fullpath[PATH_MAX];
+-  struct lookup resolve, stickycheck;
++  struct lookup resolve, stickycheck, check2;
+   vir_bytes vname1, vname2;
+   size_t vname1_length, vname2_length;
+ 
+@@ -193,9 +208,6 @@ int do_rename(void)
+   if (fetch_name(vname1, vname1_length, fullpath) != OK) return(err_code);
+   if ((old_dirp = last_dir(&resolve, fp)) == NULL) return(err_code);
+ 
+-  /* If the sticky bit is set, only the owner of the file or a privileged
+-     user is allowed to rename */
+-  if ((old_dirp->v_mode & S_ISVTX) == S_ISVTX) {
+ 	/* Look up inode of file to unlink to retrieve owner */
+ 	lookup_init(&stickycheck, resolve.l_path, PATH_RET_SYMLINK, &vmp2, &vp);
+ 	stickycheck.l_vmnt_lock = VMNT_READ;
+@@ -202,9 +214,16 @@ int do_rename(void)
+ 	stickycheck.l_vnode_lock = VNODE_READ;
+ 	vp = advance(old_dirp, &stickycheck, fp);
+ 	assert(vmp2 == NULL);
++
+ 	if (vp != NULL) {
++    /* If the sticky bit is set, only the owner of the file or a privileged
++       user is allowed to rename */
++    if ((old_dirp->v_mode & S_ISVTX) == S_ISVTX) {
+ 		if(vp->v_uid != fp->fp_effuid && fp->fp_effuid != SU_UID)
+ 			r = EPERM;
++    }
++    if (excl_who_locked(vp) != -1 && excl_who_locked(vp) != fp->fp_realuid)
++      r = EACCES;
+ 		unlock_vnode(vp);
+ 		put_vnode(vp);
+ 	} else
+@@ -215,7 +234,6 @@ int do_rename(void)
+ 		put_vnode(old_dirp);
+ 		return(r);
+ 	}
+-  }
+ 
+   /* Save the last component of the old name */
+   if (strlen(fullpath) >= sizeof(old_name)) {
+@@ -247,6 +265,22 @@ int do_rename(void)
+ 	return(r);
+   }
+ 
++	/* Look up inode of file to unlink to retrieve owner */
++	lookup_init(&check2, fullpath, PATH_RET_SYMLINK, &vmp22, &vp2);
++	check2.l_vmnt_lock = VMNT_READ;
++	check2.l_vnode_lock = VNODE_READ;
++	vp2 = advance(new_dirp, &check2, fp);
++	assert(vmp22 == NULL);
++
++  if (vp2) {
++    if (excl_who_locked(vp2) != -1 &&  excl_who_locked(vp2) != fp->fp_realuid)
++      r = EACCES;
++    if (r == OK)
++      excl_set_deleted(vp2, -2);
++    unlock_vnode(vp2);
++    put_vnode(vp2);
++  }
++
+   /* Both parent directories must be on the same device. */
+   if (old_dirp->v_fs_e != new_dirp->v_fs_e) r = EXDEV;
+ 
+@@ -304,8 +338,10 @@ int do_truncate(void)
+   if (fetch_name(vname, vname_length, fullpath) != OK) return(err_code);
+   if ((vp = eat_path(&resolve, fp)) == NULL) return(err_code);
+ 
+-  /* Ask FS to truncate the file */
+-  if ((r = forbidden(fp, vp, W_BIT)) == OK) {
++  if (excl_who_locked(vp) != -1 && excl_who_locked(vp) != fp->fp_realuid) {
++    r = EACCES;
++  } /* Ask FS to truncate the file */
++  else if ((r = forbidden(fp, vp, W_BIT)) == OK) {
+ 	/* If the file size does not change, do not make the actual call. This
+ 	 * ensures that the file times are retained when the file size remains
+ 	 * the same, which is a POSIX requirement.
+@@ -344,16 +380,19 @@ int do_ftruncate(void)
+ 
+   vp = rfilp->filp_vno;
+ 
+-  if (!(rfilp->filp_mode & W_BIT))
++  if (excl_who_locked(vp) != -1 && excl_who_locked(vp) != fp->fp_realuid) {
++    r = EACCES;
++  } else if (!(rfilp->filp_mode & W_BIT)) {
+ 	r = EBADF;
+-  else if (S_ISREG(vp->v_mode) && vp->v_size == length)
++  } else if (S_ISREG(vp->v_mode) && vp->v_size == length) {
+ 	/* If the file size does not change, do not make the actual call. This
+ 	 * ensures that the file times are retained when the file size remains
+ 	 * the same, which is a POSIX requirement.
+ 	 */
+ 	r = OK;
+-  else
++  } else {
+ 	r = truncate_vnode(vp, length);
++  }
+ 
+   unlock_filp(rfilp);
+   return(r);
+diff -rupNEZbB original/usr/src/minix/servers/vfs/Makefile solve/usr/src/minix/servers/vfs/Makefile
+--- original/usr/src/minix/servers/vfs/Makefile	2014-09-13 23:56:50.000000000 +0200
++++ solve/usr/src/minix/servers/vfs/Makefile	2023-06-18 10:05:13.962989118 +0200
+@@ -7,7 +7,8 @@ SRCS=	main.c open.c read.c write.c pipe.
+ 	filedes.c stadir.c protect.c time.c \
+ 	lock.c misc.c utility.c select.c table.c \
+ 	vnode.c vmnt.c request.c \
+-	tll.c comm.c worker.c coredump.c
++	tll.c comm.c worker.c coredump.c \
++	exclusive.c
+ 
+ .if ${MKCOVERAGE} != "no"
+ SRCS+=  gcov.c
+diff -rupNEZbB original/usr/src/minix/servers/vfs/mount.c solve/usr/src/minix/servers/vfs/mount.c
+--- original/usr/src/minix/servers/vfs/mount.c	2014-09-13 23:56:50.000000000 +0200
++++ solve/usr/src/minix/servers/vfs/mount.c	2023-06-18 23:52:15.072762737 +0200
+@@ -23,6 +23,7 @@
+ #include <assert.h>
+ #include "file.h"
+ #include <minix/vfsif.h>
++#include "proto.h"
+ #include "vnode.h"
+ #include "vmnt.h"
+ #include "path.h"
+@@ -480,17 +481,22 @@ int unmount(
+   /* See if the mounted device is busy.  Only 1 vnode using it should be
+    * open -- the root vnode -- and that inode only 1 time. */
+   locks = count = 0;
+-  for (vp = &vnode[0]; vp < &vnode[NR_VNODES]; vp++)
++  for (vp = &vnode[0]; vp < &vnode[NR_VNODES]; vp++) {
+ 	  if (vp->v_ref_count > 0 && vp->v_dev == dev) {
+-		count += vp->v_ref_count;
++		count += vp->v_ref_count - (excl_who_locked(vp) != -1);
+ 		if (is_vnode_locked(vp)) locks++;
+ 	  }
++  }
+ 
+   if (count > 1 || locks > 1 || tll_haspendinglock(&vmp->m_lock)) {
+ 	unlock_vmnt(vmp);
+ 	return(EBUSY);    /* can't umount a busy file system */
+   }
+ 
++  for (vp = &vnode[0]; vp < &vnode[NR_VNODES]; vp++) {
++    if (excl_who_locked(vp) != -1) excl_remove(vp);
++  }
++
+   /* This FS will now disappear, so stop listing it in statistics. */
+   vmp->m_flags &= ~VMNT_CANSTAT;
+ 
+diff -rupNEZbB original/usr/src/minix/servers/vfs/open.c solve/usr/src/minix/servers/vfs/open.c
+--- original/usr/src/minix/servers/vfs/open.c	2014-09-13 23:56:50.000000000 +0200
++++ solve/usr/src/minix/servers/vfs/open.c	2023-06-18 22:06:02.662969773 +0200
+@@ -18,6 +18,7 @@
+ #include <minix/com.h>
+ #include <minix/u64.h>
+ #include "file.h"
++#include "proto.h"
+ #include "scratchpad.h"
+ #include "lock.h"
+ #include <sys/dirent.h>
+@@ -106,6 +107,11 @@ int common_open(char path[PATH_MAX], int
+ 
+   lookup_init(&resolve, path, PATH_NOFLAGS, &vmp, &vp);
+ 
++  if (excl_who_locked(vp) != -1 && excl_who_locked(vp) != fp->fp_realuid) {
++    unlock_filp(filp);
++    return EACCES;
++  }
++
+   /* If O_CREATE is set, try to make the file. */
+   if (oflags & O_CREAT) {
+         omode = I_REGULAR | (omode & ALLPERMS & fp->fp_umask);
+@@ -685,6 +691,7 @@ int fd_nr;
+   if ( (rfilp = get_filp2(rfp, fd_nr, VNODE_OPCL)) == NULL) return(err_code);
+ 
+   vp = rfilp->filp_vno;
++  excl_unlock_fd(fd_nr, rfp->fp_pid);
+ 
+   /* first, make all future get_filp2()'s fail; otherwise
+    * we might try to close the same fd in different threads
+diff -rupNEZbB original/usr/src/minix/servers/vfs/proto.h solve/usr/src/minix/servers/vfs/proto.h
+--- original/usr/src/minix/servers/vfs/proto.h	2014-09-13 23:56:50.000000000 +0200
++++ solve/usr/src/minix/servers/vfs/proto.h	2023-06-18 23:52:26.879429020 +0200
+@@ -348,4 +348,14 @@ void worker_wait(void);
+ struct worker_thread *worker_suspend(void);
+ void worker_resume(struct worker_thread *org_self);
+ void worker_set_proc(struct fproc *rfp);
++
++/* exclusive.c */
++int do_exclusive(void);
++int do_fexclusive(void);
++int excl_who_locked(struct vnode *vp);
++void excl_unlock_fd(int fd, pid_t pid);
++void excl_set_deleted(struct vnode *vp, int flag);
++void excl_remove_deleted(struct vnode *vp);
++void excl_remove(struct vnode *vp);
++
+ #endif
+diff -rupNEZbB original/usr/src/minix/servers/vfs/read.c solve/usr/src/minix/servers/vfs/read.c
+--- original/usr/src/minix/servers/vfs/read.c	2014-09-13 23:56:50.000000000 +0200
++++ solve/usr/src/minix/servers/vfs/read.c	2023-06-18 15:26:14.689891851 +0200
+@@ -147,6 +147,10 @@ int read_write(struct fproc *rfp, int rw
+ 
+   if (size > SSIZE_MAX) return(EINVAL);
+ 
++  if (excl_who_locked(vp) != -1 && excl_who_locked(vp) != fp->fp_realuid) {
++    return EACCES;
++  }
++
+   op = (rw_flag == READING ? CDEV_READ : CDEV_WRITE);
+ 
+   if (S_ISFIFO(vp->v_mode)) {		/* Pipes */
+diff -rupNEZbB original/usr/src/minix/servers/vfs/table.c solve/usr/src/minix/servers/vfs/table.c
+--- original/usr/src/minix/servers/vfs/table.c	2014-09-13 23:56:50.000000000 +0200
++++ solve/usr/src/minix/servers/vfs/table.c	2023-06-18 10:05:13.966322451 +0200
+@@ -65,4 +65,6 @@ int (* const call_vec[NR_VFS_CALLS])(voi
+ 	CALL(VFS_COPYFD)	= do_copyfd,		/* copyfd(2) */
+ 	CALL(VFS_CHECKPERMS)	= do_checkperms,	/* checkperms(2) */
+ 	CALL(VFS_GETSYSINFO)	= do_getsysinfo,	/* getsysinfo(2) */
++	CALL(VFS_EXCLUSIVE)	= do_exclusive,		/* exclusive() */
++	CALL(VFS_FEXCLUSIVE)	= do_fexclusive,	/* fexclusive() */
+ };
+diff -rupNEZbB original/usr/src/minix/servers/vfs/vnode.c solve/usr/src/minix/servers/vfs/vnode.c
+--- original/usr/src/minix/servers/vfs/vnode.c	2014-09-13 23:56:50.000000000 +0200
++++ solve/usr/src/minix/servers/vfs/vnode.c	2023-06-18 23:16:31.636165709 +0200
+@@ -255,6 +255,8 @@ void put_vnode(struct vnode *vp)
+    * is already locked, we have a consistency problem somewhere. */
+   lock_vp = lock_vnode(vp, VNODE_OPCL);
+ 
++  excl_remove_deleted(vp);
++
+   if (vp->v_ref_count > 1) {
+ 	/* Decrease counter */
+ 	vp->v_ref_count--;
+diff -rupNEZbB original/usr/src/sys/sys/fcntl.h solve/usr/src/sys/sys/fcntl.h
+--- original/usr/src/sys/sys/fcntl.h	2014-09-13 23:56:50.000000000 +0200
++++ solve/usr/src/sys/sys/fcntl.h	2023-06-18 10:05:13.979655784 +0200
+@@ -301,6 +301,13 @@ struct flock {
+ #define	AT_REMOVEDIR		0x800	/* Remove directory only */
+ #endif
+ 
++/*
++ * Constants for exclusive lock.
++ */
++#define EXCL_UNLOCK				1	/* Unlock. */
++#define EXCL_UNLOCK_FORCE		2	/* Forced unlock by privileged users. */
++#define EXCL_LOCK				4	/* Lock unconditionally. */
++#define EXCL_LOCK_NO_OTHERS		8	/* Lock if no other users have this file opened. */
+ 
+ #ifndef _KERNEL
+ #include <sys/cdefs.h>

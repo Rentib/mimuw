@@ -1,0 +1,128 @@
+diff --git a/usr/src/minix/include/minix/callnr.h b/usr/src/minix/include/minix/callnr.h
+index 6030687..a543d38 100644
+--- a/usr/src/minix/include/minix/callnr.h
++++ b/usr/src/minix/include/minix/callnr.h
+@@ -118,7 +118,9 @@
+ #define VFS_COPYFD		(VFS_BASE + 46)
+ #define VFS_CHECKPERMS		(VFS_BASE + 47)
+ #define VFS_GETSYSINFO		(VFS_BASE + 48)
++#define VFS_EXCLUSIVE		(VFS_BASE + 49)
++#define VFS_FEXCLUSIVE		(VFS_BASE + 50)
+ 
+-#define NR_VFS_CALLS		49	/* highest number from base plus one */
++#define NR_VFS_CALLS		51	/* highest number from base plus one */
+ 
+ #endif /* !_MINIX_CALLNR_H */
+diff --git a/usr/src/minix/include/minix/ipc.h b/usr/src/minix/include/minix/ipc.h
+index 622c40d..641ab12 100644
+--- a/usr/src/minix/include/minix/ipc.h
++++ b/usr/src/minix/include/minix/ipc.h
+@@ -841,6 +841,16 @@ typedef struct {
+ } mess_lc_vfs_umount;
+ _ASSERT_MSG_SIZE(mess_lc_vfs_umount);
+ 
++typedef struct {
++	int fd;
++	vir_bytes name;
++	size_t len;
++	int flags;
++
++	uint8_t padding[40];
++} mess_lc_vfs_exclusive;
++_ASSERT_MSG_SIZE(mess_lc_vfs_exclusive);
++
+ typedef struct {
+ 	void		*addr;
+ 	uint8_t		padding[52];
+@@ -2121,6 +2131,7 @@ typedef struct {
+ 		mess_lc_vfs_truncate	m_lc_vfs_truncate;
+ 		mess_lc_vfs_umask	m_lc_vfs_umask;
+ 		mess_lc_vfs_umount	m_lc_vfs_umount;
++		mess_lc_vfs_exclusive	m_lc_vfs_exclusive;
+ 		mess_lc_vm_brk		m_lc_vm_brk;
+ 		mess_lc_vm_getphys	m_lc_vm_getphys;
+ 		mess_lc_vm_rusage	m_lc_vm_rusage;
+diff --git a/usr/src/minix/servers/vfs/Makefile b/usr/src/minix/servers/vfs/Makefile
+index 76a22a4..36b41ad 100644
+--- a/usr/src/minix/servers/vfs/Makefile
++++ b/usr/src/minix/servers/vfs/Makefile
+@@ -7,7 +7,8 @@ SRCS=	main.c open.c read.c write.c pipe.c dmap.c \
+ 	filedes.c stadir.c protect.c time.c \
+ 	lock.c misc.c utility.c select.c table.c \
+ 	vnode.c vmnt.c request.c \
+-	tll.c comm.c worker.c coredump.c
++	tll.c comm.c worker.c coredump.c \
++	exclusive.c
+ 
+ .if ${MKCOVERAGE} != "no"
+ SRCS+=  gcov.c
+diff --git a/usr/src/minix/servers/vfs/const.h b/usr/src/minix/servers/vfs/const.h
+index 0cce3cf..534f643 100644
+--- a/usr/src/minix/servers/vfs/const.h
++++ b/usr/src/minix/servers/vfs/const.h
+@@ -7,6 +7,7 @@
+ #define NR_MNTS           16 	/* # slots in mount table */
+ #define NR_VNODES       1024	/* # slots in vnode table */
+ #define NR_WTHREADS	   9	/* # slots in worker thread table */
++#define NR_EXCLUSIVE	8	/* # slots in the exclusive locking table */
+ 
+ #define NR_NONEDEVS	NR_MNTS	/* # slots in nonedev bitmap */
+ 
+diff --git a/usr/src/minix/servers/vfs/exclusive.c b/usr/src/minix/servers/vfs/exclusive.c
+new file mode 100644
+index 0000000..0bd3649
+--- /dev/null
++++ b/usr/src/minix/servers/vfs/exclusive.c
+@@ -0,0 +1,9 @@
++#include "fs.h"
++
++int do_exclusive(void) {
++	return(ENOSYS);  // TODO: implementacja VFS_EXCLUSIVE
++}
++
++int do_fexclusive(void) {
++	return(ENOSYS);  // TODO: implementacja VFS_FEXCLUSIVE
++}
+diff --git a/usr/src/minix/servers/vfs/proto.h b/usr/src/minix/servers/vfs/proto.h
+index 051a807..56ce854 100644
+--- a/usr/src/minix/servers/vfs/proto.h
++++ b/usr/src/minix/servers/vfs/proto.h
+@@ -348,4 +348,9 @@ void worker_wait(void);
+ struct worker_thread *worker_suspend(void);
+ void worker_resume(struct worker_thread *org_self);
+ void worker_set_proc(struct fproc *rfp);
++
++/* exclusive.c */
++int do_exclusive(void);
++int do_fexclusive(void);
++
+ #endif
+diff --git a/usr/src/minix/servers/vfs/table.c b/usr/src/minix/servers/vfs/table.c
+index 8cec7c1..1378c07 100644
+--- a/usr/src/minix/servers/vfs/table.c
++++ b/usr/src/minix/servers/vfs/table.c
+@@ -65,4 +65,6 @@ int (* const call_vec[NR_VFS_CALLS])(void) = {
+ 	CALL(VFS_COPYFD)	= do_copyfd,		/* copyfd(2) */
+ 	CALL(VFS_CHECKPERMS)	= do_checkperms,	/* checkperms(2) */
+ 	CALL(VFS_GETSYSINFO)	= do_getsysinfo,	/* getsysinfo(2) */
++	CALL(VFS_EXCLUSIVE)	= do_exclusive,		/* exclusive() */
++	CALL(VFS_FEXCLUSIVE)	= do_fexclusive,	/* fexclusive() */
+ };
+diff --git a/usr/src/sys/sys/fcntl.h b/usr/src/sys/sys/fcntl.h
+index 6caaf29..65095df 100644
+--- a/usr/src/sys/sys/fcntl.h
++++ b/usr/src/sys/sys/fcntl.h
+@@ -301,6 +301,13 @@ struct flock {
+ #define	AT_REMOVEDIR		0x800	/* Remove directory only */
+ #endif
+ 
++/*
++ * Constants for exclusive lock.
++ */
++#define EXCL_UNLOCK				1	/* Unlock. */
++#define EXCL_UNLOCK_FORCE		2	/* Forced unlock by privileged users. */
++#define EXCL_LOCK				4	/* Lock unconditionally. */
++#define EXCL_LOCK_NO_OTHERS		8	/* Lock if no other users have this file opened. */
+ 
+ #ifndef _KERNEL
+ #include <sys/cdefs.h>
