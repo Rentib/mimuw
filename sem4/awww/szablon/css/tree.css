@@ -1,0 +1,38 @@
+.wrapper3 {
+  border-right: 1px solid var(--light-gray);
+}
+
+.tree {
+  padding-top: 10%;
+  margin-left: 10%;
+  display: flex;
+  justify-content: left;
+}
+
+.tree > ul ul {
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: 1px solid var(--light-gray);
+}
+
+.tree li {
+  list-style: none;
+  color: var(--gray);
+  font-style: italic;
+  font-weight: normal;
+}
+
+.tree li::before {
+  font-family: FontAwesome;
+  display: inline-block;
+  margin-left: calc(var(--icon-space) * -1);
+  margin-right: 3px;
+  width: var(--icon-space);
+  content: "\f15b"; /* file icon */
+  color: var(--aqua);
+}
+
+.tree li.folder::before {
+  content: "\f07b"; /* folder icon */
+  color: var(--blue);
+}

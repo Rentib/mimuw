@@ -1,0 +1,41 @@
+.data {
+  width: 100%;
+  margin-top: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.data label {
+  order: 1;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0 5px;
+  border-radius: 5px 5px 5px 0px;
+  transition: 0.3s;
+  margin-left: 2px;
+  color: var(--fg-color);
+  background-color: var(--light-gray);
+}
+
+.data .tab-content {
+  border-top: 1px solid var(--light-gray);
+  order: 9;
+  flex-grow: 1;
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+
+.data input[type="radio"] {
+  display: none;
+}
+
+.data label:hover, .data input[type="radio"]:checked + label {
+  background-color: var(--green);
+}
+
+.data input[type="radio"]:checked + label + .tab-content {
+  display: block;
+}

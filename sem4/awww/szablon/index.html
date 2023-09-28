@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+  <title>Zadanie 1</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" type="text/css" href="./style.css">
+  <script src="https://kit.fontawesome.com/8589741894.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <input type="checkbox" id="theme-switch">
+  <div class="app">
+
+    <nav class="wrapper menu">
+      <ul class="left">
+        <li class="menu-left-item">
+          <a href="#">Plik</a>
+        </li>
+        <li class="menu-left-item">
+          <a href="#">Edycja</a>
+        </li>
+        <li class="menu-left-item">
+          <a href="#">Opcje</a>
+        </li>
+      </ul>
+
+      <div class="right">
+        <label for="theme-switch"></label>
+      </div>
+    </nav>
+
+    <div class="wrapper wrapper2">
+
+      <div class="wrapper wrapper3">
+        <div class="tree">
+          <ul>
+            <li class="folder">etc
+              <ul>
+                <li class="folder">apache2</li>
+                <li>passwd</li>
+              </ul>
+            </li>
+            <li class="folder">mnt</li>
+            <li class="folder">home</li>
+            <li class="folder">var
+              <ul>
+                <li class="folder">www
+                  <ul>
+                    <li>index.html</li>
+                    <li>main.js</li>
+                    <li>style.css</li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="wrapper wrapper4">
+
+        <div class="wrapper wrapper5">
+
+          <div class="wrapper wrapper6">
+            <textarea class="text">
+#include &lt;mcs51/8051.h&gt;
+
+unsigned char count = 0;
+
+void setup()
+{
+  // set timer 0 mode 1
+  TMOD = 0x01;
+  TH0 = 0x4C;
+  TL0 = 0x00;
+
+  // start timer 0
+  TR0 = 1;
+  // enable timer 0 interrupt
+  ET0 = 1;
+  // enable all interrupt
+  EA = 1;
+}
+
+void loop()
+{
+  if(count%20 == 0)
+  {
+    P0_0 = !P0_0;
+    count = 0;
+  }
+}
+
+void main()
+{
+  setup();
+  while(1) loop();
+}
+
+void timer0() __interrupt 1
+{
+  count++;
+}
+</textarea>
+          </div>
+
+          <div class="wrapper wrapper7">
+            <div class="code">
+              <pre>
+void setup()
+{
+  // set timer 0 mode 1
+  TMOD = 0x01;
+  TH0 = 0x4C;
+  TL0 = 0x00;
+
+  // start timer 0
+  TR0 = 1;
+  // enable timer 0 interrupt
+  ET0 = 1;
+  // enable all interrupt
+  EA = 1;
+}
+</pre>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="wrapper wrapper8">
+          <div class="data">
+            <input type="radio" name="tabs" id="tab1" checked>
+            <label for="tab1">Tab1</label>
+            <div class="tab-content">
+              This is content of tab 1.
+            </div>
+            <input type="radio" name="tabs" id="tab2">
+            <label for="tab2">Tab2</label>
+            <div class="tab-content">
+              This is content of tab 2.
+            </div>
+            <input type="radio" name="tabs" id="tab3">
+            <label for="tab3">Tab3</label>
+            <div class="tab-content">
+              This is content of tab 3.
+            </div>
+            <input type="radio" name="tabs" id="tab4">
+            <label for="tab4">Tab4</label>
+            <div class="tab-content">
+              This is content of tab 4.
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+
+</html>
+
+<!-- TODO:
+    - resize by dragging border instead of a corner - https://stackoverflow.com/questions/26233180/resize-a-div-on-border-drag-and-drop-without-adding-extra-markup
+    - interactive file tree
+    - text section
+    - code section
+-->

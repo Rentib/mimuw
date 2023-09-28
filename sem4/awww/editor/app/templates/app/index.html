@@ -1,0 +1,139 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pl">
+
+  <head>
+    <title>Zadanie 3</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://kit.fontawesome.com/8589741894.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.62.0/lib/codemirror.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.62.0/theme/monokai.css" />
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.62.0/lib/codemirror.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.62.0/mode/javascript/javascript.js"></script>
+
+    <link rel="stylesheet" href="{% static 'app/css/style.css' %}">
+  </head>
+
+  <body>
+    <input type="checkbox" id="theme-switch">
+    <div class="app">
+
+      <nav class="wrapper menu">
+        <ul class="left">
+          <li class="menu-left-item">
+            <a href="#" class="save-file-btn">Zapisz</a>
+          </li>
+          <li class="menu-left-item">
+            <a href="#" class="compile-btn">Kompiluj</a>
+          </li>
+          <li class="menu-left-item">
+            <a href="#" class="compile-and-download-btn">Pobierz</a>
+          </li>
+        </ul>
+
+        <div class="right">
+          <label for="theme-switch"></label>
+        </div>
+      </nav>
+
+      <div class="wrapper wrapper2">
+
+        <div class="wrapper wrapper3">
+          <div class="tree"></div>
+        </div>
+
+        <div class="wrapper wrapper4">
+
+          <div class="wrapper wrapper5">
+
+            <div class="wrapper wrapper6">
+              <textarea id="text" class="text"></textarea>
+            </div>
+
+            <div class="wrapper wrapper7">
+              <div class="code"></div>
+            </div>
+
+          </div>
+
+          <div class="wrapper wrapper8">
+            <div class="data">
+              <input type="radio" name="tabs" id="tab1" checked>
+              <label for="tab1">Standard</label>
+              <div class="tab-content">
+                <ul>
+                  <li><button class="c89">C89</button></li>
+                  <li><button class="c99">C99</button></li>
+                  <li><button class="c11">C11</button></li>
+                </ul>
+              </div>
+              <input type="radio" name="tabs" id="tab2">
+              <label for="tab2">Optymalizacje</label>
+              <div class="tab-content">
+                <ul>
+                  <li><button class="opt-code-speed">Optimize for code speed</button></li>
+                  <li><button class="opt-code-size">Optimize for code size</button></li>
+                  <li><button class="peep-asm">Enable peephole optimization</button></li>
+                </ul>
+
+              </div>
+              <input type="radio" name="tabs" id="tab3">
+              <label for="tab3">Procesor</label>
+              <div class="tab-content">
+                <ul>
+                  <li><button class="mmcs51">CS51</button></li>
+                  <li><button class="mz80">Z80</button></li>
+                  <li><button class="mstm8">STM8</button></li>
+                </ul>
+              </div>
+              <input type="radio" name="tabs" id="tab4">
+              <label for="tab4">Zależne</label>
+              <div class="tab-content">
+                <div class="tab-dependency" id="mmcs51-dep">
+                  <ul>
+                    <li><button class="d1-model-small">model-small</button></li>
+                    <li><button class="d1-model-medium">model-medium</button></li>
+                    <li><button class="d1-model-large">model-large</button></li>
+                  </ul>
+                </div>
+
+                <div class="tab-dependency" id="mz80-dep">
+                  <ul>
+                    <li><button class="d2-fno-omit-frame-pointer">fno-omit-frame-pointer</button></li>
+                    <li><button class="d2-reserve-regs-iy">reserve-regs-iy</button></li>
+                  </ul>
+                </div>
+
+                <div class="tab-dependency" id="mstm8-dep">
+                  <ul>
+                    <li><button class="d3-model-medium">model-medium</button></li>
+                    <li><button class="d3-model-large">model-large</button></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <script src="{% static 'app/js/main.js' %}"></script>
+  </body>
+
+</html>
+
+<!-- TODO:
+  - resize by dragging border instead of a corner - https://stackoverflow.com/questions/26233180/resize-a-div-on-border-drag-and-drop-without-adding-extra-markup
+  - interactive file tree
+  - text section
+  - code section
+-->

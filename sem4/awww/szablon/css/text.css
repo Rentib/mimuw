@@ -1,0 +1,14 @@
+.wrapper5 {
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.wrapper6 {
+  border-right: 1px solid var(--light-gray);
+}
+
+.text {
+  width: 100%;
+  height: 99%;
+  border: none;
+  resize: none;
+}

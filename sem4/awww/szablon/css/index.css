@@ -1,0 +1,97 @@
+/*
+  +--------------------+
+  | menu               |
+  +------+------+------+
+  |      | text | code |
+  | tree +------+------+
+  |      | data        |
+  +------+-------------+
+*/
+
+* {
+  margin: 0;
+  padding: 0;
+  color: var(--fg-color);
+  background-color: var(--bg-color);
+  font-family: Hack, monospace;
+}
+
+.app {
+  width: 100vw;
+  height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.menu {
+  width: 100%;
+}
+
+.wrapper2 {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.wrapper3 {
+  width: 11%;
+  height: 100%;
+  resize: horizontal;
+  overflow: auto;
+}
+
+.wrapper4 {
+  height: 100%;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.wrapper5 {
+  width: 100%;
+  height: 70%;
+  min-height: 25%;
+  max-height: 75%;
+  resize: vertical;
+  overflow: auto;
+  display: flex;
+  flex-direction: row;
+}
+
+.wrapper6 {
+  width: 60%;
+  height: 100%;
+  resize: horizontal;
+  overflow: hidden;
+}
+
+.wrapper7 {
+  height: 100%;
+  flex: 1;
+}
+
+@media only screen and (max-width: 600px) {
+  .wrapper5 {
+    flex-direction: column;
+    min-height: 15%;
+    max-height: 85%;
+  }
+  .wrapper6 {
+    width: 100%;
+    height: 60%;
+    resize: vertical;
+    overflow: auto;
+  }
+  .wrapper7 {
+    width: 100%;
+    min-height: 1%;
+    flex: 1;
+  }
+}
+
+.wrapper8 {
+  width: 100%;
+  flex: 1;
+}
