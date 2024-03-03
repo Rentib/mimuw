@@ -1,0 +1,17 @@
+/* akcelerometr */
+#define LIS35DE_ADDR                    0x1D
+#define LIS35DE_CTRL0                   0x1F
+#define LIS35DE_CTRL1                   0x20
+#define LIS35DE_CTRL2                   0x21
+#define LIS35DE_CTRL3                   0x22
+#define LIS35DE_STATUS                  0x27
+#define LIS35DE_OUT_X                   0x29
+#define LIS35DE_OUT_Y                   0x2B
+#define LIS35DE_OUT_Z                   0x2D
+#define LIS35DE_CLICK_CFG               0x38
+#define LIS35DE_CLICK_SRC               0x39
+#define LIS35DE_CLICK_THSY_X            0x3B
+#define LIS35DE_CLICK_THSZ              0x3C
+#define LIS35DE_CLICK_TIME_LIMIT        0x3D
+#define LIS35DE_CLICK_LATENCY           0x3E
+#define LIS35DE_CLICK_WINDOW            0x3F
