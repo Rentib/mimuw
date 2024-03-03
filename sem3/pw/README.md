@@ -7,7 +7,7 @@
 
 | ZADANIE       | FOLDER      | PUNKTY            |
 | :-----------: | :---------: | :---------------: |
-| **java**      | nie ma      | **0** / 10 *pkt*  |
+| **java**      | `java`      | **4** / 10 *pkt*  |
 | **unix**      | `executor/` | **10** / 10 *pkt* |
 | **cpp**       | nie ma      | **0** / 10 *pkt*  |
 | **aktywnosc** | nie ma      | **10** / 10 *pkt* |
