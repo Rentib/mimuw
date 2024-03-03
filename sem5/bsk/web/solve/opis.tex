@@ -1,0 +1,66 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage{fancyhdr}
+\usepackage[T1]{fontenc}
+\usepackage[T1]{polski}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{enumerate}
+\usepackage[margin=1in]{geometry} % zmniejsza margines
+\usepackage{nopageno} % usuwa numery stron
+
+\title{\textit{
+    \textbf{BSK - Aplikacje Webowe}\\
+}}
+\author{Stanisław Bitner - 438247}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Wstęp}
+Był udostępniony kod źródłowy, więc zacząłem od znalezienia wszystkich flag za
+pomocą rekurencyjnego grepa.
+Okazało się, że flagi są w następujących miejscach:
+\begin{itemize}
+  \item w pliku \texttt{/flag.txt};
+  \item w stopce admina;
+  \item w mikroserwisie.
+\end{itemize}
+
+\section*{/flag.txt}
+Szablon używany do pokazywania flagi nie jest sprawdzany w kodzie źródłowym,
+więc wystarczyło podać plik z flagą jako szablon wysłanej kartki.
+
+\section*{Stopka}
+Treść wysyłanych kartek jest sprawdzana jedynie po stronie klienta, więc można
+było wysłać zapytania bez użycia przeglądarki i dzięki temu zrobić
+HTMLInjection. Łatwo było więc wysłać kartkę do admina, która zmusza go do
+wysłania kartki do nas. Aby zdobyć CSRF token admina można było zrobić GET
+podstrony /create, w której jest on jawnie zapisany przy użyciu szablonu
+Django. Pozostała jeszcze kwestia zmuszenia admina do odczytania naszej kartki,
+ale okazało się, że xss-bot robi to automatycznie, więc nie trzeba było nic
+z tym robić.
+
+\section*{Mikroserwis}
+Mikroserwis jest dostępny jedynie poprzez localhosta, więc trzeba było się do
+niego jakoś dobrać. Znalezienie adresu mikroserwisu było proste po przeczytaniu
+kodu. Każda kartka ma opcje DownloadPNG, która pobiera zawartość kartki.
+Zawartość kartki można oczywiście podmienić robiąc przekierowanie na adres
+mikroserwisu. Wystarczyło wysłać do nas samych kartkę z przekierowaniem
+i później wykonać dla niej DownloadPNG.
+
+\section*{Treść Flag}
+\begin{itemize}
+  \item /flag.txt:   FLAG\{JeszczeJednaFlagaZaPunkty\}
+  \item Stopka:      FLAG\{ToJestFlagaZeStopki\}
+  \item Mikroserwis: FLAG\{71a4b4fd2214b808e4942dfb06c717878399a04c\}
+\end{itemize}
+
+\end{document}
