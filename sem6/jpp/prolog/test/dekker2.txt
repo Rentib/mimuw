@@ -1,0 +1,12 @@
+variables([turn]).
+arrays([wants]).
+program([ assign(array(wants, pid), 1),
+          condGoto(array(wants, 1-pid) = 0, 7),
+          assign(array(wants, pid), 0),
+          condGoto(turn <> pid, 4),
+          assign(array(wants, pid), 1),
+          goto(2),
+          sekcja,
+          assign(turn, 1-pid),
+          assign(array(wants, pid), 0),
+          goto(1)]).

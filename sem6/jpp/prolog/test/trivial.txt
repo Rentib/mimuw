@@ -1,0 +1,3 @@
+variables([]).
+arrays([]).
+program([sekcja, goto(2), goto(1)]).

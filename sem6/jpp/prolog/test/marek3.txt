@@ -1,0 +1,16 @@
+variables([]).
+arrays([level, last_to_enter]).
+program([
+    assign(array(level, pid), 1),
+    assign(array(last_to_enter, 0), pid),
+    condGoto(array(last_to_enter, 0) <> pid, 6),
+    condGoto(0 < array(level, (3 * pid * pid - 7 * pid + 4) / 2), 3),
+    condGoto(0 < array(level, (-3 * pid * pid + 5 * pid + 2) / 2), 3),
+    assign(array(level, pid), 2),
+    assign(array(last_to_enter, 1), pid),
+    condGoto(array(last_to_enter, 1) <> pid, 11),
+    condGoto(1 < array(level, (3 * pid * pid - 7 * pid + 4) / 2), 8),
+    condGoto(1 < array(level, (-3 * pid * pid + 5 * pid + 2) / 2), 8),
+        sekcja,
+    assign(array(level, pid), 0),
+	goto(1)]).

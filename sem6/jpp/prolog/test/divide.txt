@@ -1,0 +1,6 @@
+variables([k]).
+arrays([]).
+program([ assign(k, 5/2),
+          condGoto(k=2, 4),
+          sekcja,
+          goto(1)]).

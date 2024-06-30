@@ -1,0 +1,17 @@
+variables([]).
+arrays([entering, number]).
+program([ assign(array(entering, pid), 1),
+          condGoto(array(number, 1-pid) = 1, 5),
+          assign(array(number, pid), 1),
+          goto(6),
+          assign(array(number, pid), 2),
+          assign(array(entering, pid), 0),
+          condGoto(array(entering, 1-pid) = 1, 7),
+          condGoto(array(number, 1-pid) = 0, 13),
+          condGoto(array(number, pid) < array(number, 1-pid), 13),
+          condGoto(array(number, 1-pid) < array(number, pid), 8),
+          condGoto(1-pid < pid, 13),
+          goto(8),
+          sekcja,
+          assign(array(number, pid), 0),
+          goto(1)]).

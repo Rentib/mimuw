@@ -1,0 +1,17 @@
+variables([y]).
+arrays([x,z]).
+program( [assign(array(x, pid), y), 
+          assign(y, array(x,pid) + 1),
+          assign(array(x, pid), y),
+	  assign(y, array(x,pid) + 1),
+	  assign(array(x, pid), y),
+	  assign(y, array(x,pid) + 1),
+	  assign(array(x, pid), y),
+	  assign(y, array(x,pid) + 1),
+	  assign(array(x, pid), y),
+	  assign(y, array(x,pid) + 1),
+	  assign(array(z,pid), 1),
+	  condGoto(array(z,1 - pid) = 0, 12),
+	  condGoto(y <> 2, 13),
+	  sekcja,  
+	  goto(15)] ).
