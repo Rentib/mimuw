@@ -7,6 +7,6 @@
 | ZADANIE          |  FOLDER  |  OCENA           |
 | :--------------: |  :-----: |  :-------------: |
 | **zadanie0**     |  `zad0/` |  OK              |
-| **zadanie1**     |  `zad0/` |  OK              |
-| **zadanie2**     |  `zad0/` |       ---        |
+| **zadanie1**     |  `zad1/` |  OK              |
+| **zadanie2**     |  `zad2/` |       ---        |
 | **zaliczeniowe** |  `zal/`  |  **5**           |
