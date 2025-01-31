@@ -1,0 +1,53 @@
+cabal-version:      3.0
+name:               latc
+version:            0.1.0.0
+license:            ISC
+license-file:       LICENSE
+author:             Stanisław Bitner
+maintainer:         sbitner420@tutanota.com
+build-type:         Simple
+
+common warnings
+    ghc-options: -Wall
+
+library
+    import:           warnings
+    exposed-modules:  Compiler
+                      Parser.Abs
+                      Parser.ErrM
+                      Parser.Lex
+                      Parser.Par
+                      Parser.Print
+                      Parser.Skel
+                      Typechecker.Typechecker
+                      Typechecker.DataTypes
+                      Typechecker.EnvStore
+                      Typechecker.Exceptions
+                      Quad.Quad
+                      Quad.DataTypes
+                      Opt.Opt
+                      Opt.DataTypes
+                      Asm.Asm
+                      Asm.DataTypes
+    build-depends:    base
+                    , array
+                    , containers
+                    , mtl
+    hs-source-dirs:   src
+    default-language: Haskell2010
+    default-extensions:
+                      GADTs
+                    , LambdaCase
+                    , FlexibleInstances
+                    , FlexibleContexts
+                    , RecordWildCards
+
+executable latc
+    import:           warnings
+    main-is:          Main.hs
+    build-depends:    base
+                    , latc
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    default-extensions:
+                      LambdaCase

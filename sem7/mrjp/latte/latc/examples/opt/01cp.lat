@@ -1,0 +1,12 @@
+int main() {
+    int a = 41;
+    int b = a+1;
+    f(b);
+    return 0;
+}
+
+void f(int x) {
+     int y = x;
+     printInt(y);
+
+}

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -e
+
+file="$1"
+
+base="$(basename "$1")"
+exe="${base%.lat}"
+asm="$exe.s"
+obj="$exe.o"
+
+./dist-newstyle/build/x86_64-linux/ghc-*/latc-0.1.0.0/x/latc/opt/build/latc/latc "$file" >"$asm"
+
+nasm "$asm" -o "$obj" -f elf64
+clang "$obj" -o "$exe" -no-pie ./lib/runtime.o

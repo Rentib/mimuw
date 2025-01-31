@@ -1,0 +1,9 @@
+int main() {
+    f(5, 3);
+    f(-5, 3); // -2 - sic!
+    return 0;
+}
+
+void f(int a, int b) {
+    printInt(a % b);
+}
