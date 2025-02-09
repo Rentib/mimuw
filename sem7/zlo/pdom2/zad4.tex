@@ -1,0 +1,50 @@
+\documentclass[11pt]{article}
+
+\usepackage[british]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}                       % matma
+\usepackage{amsfonts,amsmath,amssymb,amsthm} % matma
+\usepackage{braket}
+\usepackage{tikz}
+\usepackage{hyperref}
+
+\newcommand{\dd}{\mathinner{{\ldotp}{\ldotp}}}
+
+\title{Computational Complexity, homework problem 4, Fall 2024}
+\author{Stanisław Bitner}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Problem 4}
+The solution is \textbf{heavily} based on the theorem $14.12$ of \href{https://parameterized-algorithms.mimuw.edu.pl/parameterized-algorithms.pdf}{book on moodle}.\\
+The reduction is from 3-colouring.\\
+We are given a graph $G=\langle V, E \rangle, N=|V|$, let $k = \lceil \frac{N}{\log_3{\sqrt{\log_2{N}}}} \rceil$.\\
+Arbitrarily partition vertices into $k$ parts $V_1,V_2,\ldots,V_k$,\\
+$\forall_{i \in 1 \dd k} |V_i| \le \frac{N}{k} = \log_3{\sqrt{\log_2{N}}}$.\\
+For every part $V_i$, list all possible good $3-$colourings of $G[V_i]$.\\
+There are at most $3^{|V_i|} = 3^{\log_3{\sqrt{\log_2{N}}}} = \sqrt{\log_2{N}}$ such colourings.\\
+Note that for sufficiently big $N$: $3^{|V_i|} = \sqrt{\log_2{N}} \le \frac{N}{\log_3{\sqrt{\log_2{N}}}} = k $.\\
+If for any part $V_i$ there is no $3$-colouring, then there is no $3$-colouring for the whole graph.\\
+If there is less than $\sqrt{\log_2{N}}$ colourings for any part, then copy the last one to fill the gap.\\
+Now we have a set of exactly $\sqrt{\log_2{N}}$ colourings for each part.\\
+Let $c_i^1, c_i^2, \ldots, c_i^{\sqrt{\log_2{N}}}$ be the colourings for part $V_i$.\\
+Now we create a new graph with vertices $[1 \dd k] \times [1 \dd k]$.\\
+Now we add edges $(j,i),(j',i')$ if and only if $i \neq i'$,\\
+$j \le \sqrt{\log_2{N}}, j' \le \sqrt{\log_2{N}}$ and $c_i^j \cup c_{i'}^{j'}$ is a
+valid $3$-colouring of $G[V_i \cup V_{i'}]$.\\
+Then if in $G'$ there is a $k$-clique, then there exists a $3$-colouring of $G$.\\
+Note that the number of edges incident to a single vertex in $G'$ is at most
+$\sqrt{\log_2{N}}^2 = \log_2{N}$ as well as for every $1\le b \le k$ there is no
+edge between vertices $\{ (a,b) \big| 1 \le a \le k \}$. Thus, the graph $G'$
+fulfils the requirements of the graph from the problem statement. Hence, if the
+homework problem was solvable in $\mathcal{O}(c^n)$ or here $\mathcal{O}(c^k)$,
+the ETH would be falsified.\\
+The reduction is obviously polynomial. 
+The intricacies of why finding a clique in $G'$ is equivalent to finding a
+$3$-colouring of $G$ are explained in depth in the theorem $14.12$ of the book,
+so I will not repeat them here.
+
+\end{document}

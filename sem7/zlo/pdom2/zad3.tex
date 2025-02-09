@@ -1,0 +1,42 @@
+\documentclass[11pt]{article}
+
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}                       % matma
+\usepackage{amsfonts,amsmath,amssymb,amsthm} % matma
+\usepackage{braket}
+\usepackage{tikz}
+\usepackage{esvect}
+
+\title{Computational Complexity, homework problem 3, Fall 2024}
+\author{Stanisław Bitner}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Problem 3}
+Let's define two morphisms $\varphi_1, \varphi_2 : \left\{ 0,1 \right\}
+\rightarrow \left\{ 0,1 \right\}^*$:
+\begin{align*}
+    &\varphi_1(1) = 000, & &\varphi_2(1) = 111,\\
+    &\varphi_1(0) = 011, & &\varphi_2(0) = 001,\\
+    &\vv{a} \in \left\{0,1\right\}^*\\
+    &\varphi_1(\vv{a}) = \varphi_1(a_1) \ldots \varphi_1(a_{|a|})\\
+    &\varphi_2(\vv{a}) = \varphi_2(a_1) \ldots \varphi_2(a_{|a|}).
+\end{align*}\\
+Let $A',B' \subseteq \left\{0,1\right\}^{d'}$. From the lecture, we know that
+solving orthogonal vectors problem on those two sets falsifies SETH.\\
+Observe that for any two vectors $\vv{a} \in A', \vv{b} \in B'$
+$$ \vv{a} \cdot \vv{b} = 0 \iff h(\varphi_1(\vv{a}), \varphi_2(\vv{b})) \le d', $$
+where $h$ denotes the hamming distance between two vectors.
+\\
+Thus, one may solve the orthogonal vectors problem by solving the problem
+described in the homework, which proves that solving it in
+$\mathcal{O}(d^{100} \cdot n^{2-\delta})$, where $\delta>0$, falsifies SETH. \qed\\
+The input for the homework statement would be:\\
+$d:3d', k:d', A:\{\varphi_1(\vv{a}) : \vv{a} \in A'\}, B:\{\varphi_2(\vv{b}) : \vv{b} \in B'\}$.\\
+What's more the transformation is obviously linear.
+
+\end{document}
