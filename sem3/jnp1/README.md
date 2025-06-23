@@ -9,7 +9,7 @@
 | **zadanie1** | `top7/`     | [@macfinka](https://github.com/macfinka) | **6** / 6 *pkt* | **4** / 4 *pkt* |
 | **zadanie2** | `hash/`     | [@boble2](https://github.com/boble2)     | **6** / 6 *pkt* | **3** / 4 *pkt* |
 | **zadanie3** | `moneybag/` | [@m1kush](https://github.com/m1kush)     | **6** / 6 *pkt* | **4** / 4 *pkt* |
-| **zadanie4** | `organism/` | op informatyk                            | **5** / 6 *pkt* | **4** / 4 *pkt* |
+| **zadanie4** | `organism/` | [@top-sekret](https://github.com/top-sekret) | **5** / 6 *pkt* | **4** / 4 *pkt* |
 | **zadanie5** | `kvfifo/`   | [@LaMavia](https://github.com/LaMavia)   | **3** / 6 *pkt* | **3** / 4 *pkt* |
 | **zadanie6** | `worldcup/` | [@mkostyk](https://github.com/mkostyk)   | **5** / 6 *pkt* | **3** / 4 *pkt* |
 | **zadanie7** | `images/`   | Ostatnie zadanie jest samodzielne        | **6** / 6 *pkt* | **3** / 4 *pkt* |
