@@ -1,0 +1,130 @@
+\documentclass[11pt]{article}
+
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}                       % matma
+\usepackage{amsfonts,amsmath,amssymb,amsthm} % matma
+\usepackage{braket}
+\usepackage{tikz}
+\usepackage[margin=1in]{geometry}
+
+\newcommand{\dd}{\mathinner{{\ldotp}{\ldotp}}}
+\newcommand{\quasiLinear}[1]{\widetilde{\mathcal{O}}\left(#1\right)}
+
+\title{Algorytmy Najkrótszych ścieżek -- Praca Domowa 2}
+\author{Stanisław Bitner}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{}
+
+Niech k=$\delta_G(u,v)$. Rozważmy najkrótszą ścieżkę w grafie G z $u$ do $v$.
+$P = p_1 p_2 \dd p_k$, $p_1=u, p_k=v$. Niech $z=p_{k-1}$.
+
+W grafie $G^2$ można dostać się z $u$ do $v$ na kilka sposobów. Idąc po
+wierzchołkach ze ścieżki $P$ jedną z najkrótszych ścieżek jest $p_1 p_3 \dd
+p_{k-1} p_k$ lub $p_1 p_3 \dd p_{k-2} p_{k}$, taka ścieżka ma długość
+$\lceil\frac{k-1}{2}\rceil$.
+
+Przypuśćmy, że istnieje ścieżka $P'=p'_1 p'_2 \dd p'_{k'}$ taka, że $p'_1 =
+p_1$, $p'_{k'}=p_k$ oraz $|P'| = k'-1 < \lceil\frac{k-1}{2}\rceil$. To oznacza,
+że w szczególności w grafie $G$ istniała ścieżka z $u$ do $v$ długości $d$
+taka, że $k'-1 \le d \le 2(k'-1) < 2\lceil\frac{k-1}{2}\rceil \le k$, $d<k$,
+ale $d\ge \delta_G(u,v)=k-1$, zatem $d \ge k-1$, czyli ścieżka $P'$ przechodzi po
+wierzchołkach z jednej z najkrótszych ścieżek między $u$ i $v$ w grafie $G$,
+albo po wierzchołkach ze ścieżki o $1$ dłuższej niż najkrótsza, zatem nie może
+być krótsza niż $\lceil\frac{k-1}{2}\rceil$, sprzeczność.
+
+\subsection*{(a)}
+
+Długość najkrótszej ścieżki $u \rightsquigarrow v$ w $G$ jest nieparzysta, więc
+długość najkrótszej ścieżki $u \rightsquigarrow v$ w $G^2$ jest równa
+$\frac{k}{2}$. Zauważmy, że aby dojść do sąsiada $v$ można przejść tą samą
+ścieżką $p_1 p_3 \dd p_{k-1}$ i potem jeśli $y=p_{k-1}$, to kończymy, a jeśli
+nie, to $y$ jest połączone jedną krawędzią z $p_{k-1}$, więc $\delta_{G^2}(u,y)
+\in \{\frac{k}{2}-1, \frac{k}{2}\}$, zatem $\delta_{G^2}(u,y) \le
+\delta_{G^2}(u,v)$. Dla $z=p_{k-1}$ $\delta_{G^2}(u,z)=\delta_{G^2}(u,v)-1$.
+
+\subsection*{(b)}
+
+Długość najkrótszej ścieżki $u \rightsquigarrow v$ w $G$ jest parzysta, więc
+długość najkrótszej ścieżki $u \rightsquigarrow v$ w $G^2$ jest równa
+$\frac{k-1}{2}$. Zauważmy, że aby dojść do sąsiada $v$ można przejść tą samą
+ścieżką $p_1 p_3 \dd p_{k-2}$ i potem jeśli $y=p_{k-1}$, to przechodzimy tam w
+jednym kroku, a jeśli nie, to możemy przejść w dwóch krokach, więc
+$\delta_{G^2}(u,y) \in \{\frac{k-1}{2}, \frac{k+1}{2}\}$, zatem
+$\delta_{G^2}(u,y) \ge \delta_{G^2}(u,v)$.
+
+\section{}
+Rozwiązanie będzie randomizowane.\\
+Z każdego wierzchołka w grafie prowadzimy pętelkę do niego samego o wadze $0$,
+to powoduje, że ścieżki długości dokładnie $k$ będą uwzględniały też ścieżki
+krótsze.\\
+Tworzymy $\log{n}$ hitting setów $H_0,H_1,\dd,H_{\lceil\log_{n}\rceil}$, $|H_i|
+= 42\frac{n}{2^i}\log{n}$. Najkrótsze ścieżki długości $k$ z dużym
+prawdopodobieństwem mają któryś wierzchołek w $H_{\lceil\log{k}\rceil}$
+(najkrótszych ścieżek różnych długości jest $\mathcal{O}(n^3)$). Dla każdego
+$H_i$ liczymy algorytmem Bellmana-Forda najkrótsze ścieżki w grafie $G$ oraz
+grafie transponowanym $G^T$ długości co najwyżej $2^i$, robimy to w czasie
+$\mathcal{O}(\frac{n}{2^i}\log{n} \cdot 2^i m) = \mathcal{O}(nm\log{n})$.
+Robimy to dla każdego z logarytmicznie wielu hitting setów, więc dostajemy
+złożoność $\mathcal{O}(nm\log{n} \cdot \log{n}) = \tilde{\mathcal{O}}(nm)$.\\
+Aby odpowiedzieć na zapytanie o $\delta_G^k(s,t)$ wyznaczamy najpierw $i$,
+takie że $2^i \ge k$, następnie dla każdego wierzchołka z $H_i$ sprawdzamy
+wszystkie możliwe ścieżki:
+$$
+\delta_G^k(s,t) = \min \{ \delta_{G^T}^l(v,s) + \delta_G^{k-l}(v,t) \big| v \in H_i, l=0 \dd k \}
+$$
+Wyliczenie takiego minimum zajmuje $\mathcal{O}(\frac{n}{2^i}\log{n} \cdot k)
+\le \mathcal{O}(\frac{n}{k} \log{n} \cdot k) = \mathcal{O}(n\log{n}) =
+\tilde{\mathcal{O}}(n)$.
+
+\section{}
+
+Na początku w czasie $\mathcal{O}(n+m)$ znajdujemy najkrótszą ścieżkę $s
+\rightsquigarrow t$, $P = e_1 \dd e_k$. Robimy to dynamikiem, tak jak na
+ćwiczeniach. Dla każdej krawędzi $e$ spoza $P$, $\delta_{G-e}(s,t) =
+\delta_{G}(s,t)$. Obliczenie wartości dla krawędzi ze ścieżki $P$ jest
+trudniejsze.
+
+Na początek wyliczamy $\delta_{G}(s,v)$ oraz $\delta_{G^T}(t,v)$ dla każdego $v
+\in G$, gdzie $G^T$, to transponowany graf $G$. Wyniki tych obliczeń trzymamy w
+jakichś tablicach. Potem tworzymy dwie kopie krawędzi $E_u$ i $E_v$. $E_u$
+sortujemy po kolejności topologicznej wejściowego wierzchołka krawędzi, $E_v$
+po kolejności topologicznej wyjściowego wierzchołka krawędzi. Tworzymy
+strukturę danych trzymającą krawędzi $uv$ oraz wartości $\delta_{G}(u,v) +
+w(uv) + \delta_{G^T}(t,u)$ pozwalającą na logarytmiczne dodawanie krawędzi,
+usuwanie krawędzi oraz znajdywanie minimalnej wartości (wystarczy jakiś set z
+cpp). Dodatkowo obliczamy tablicę $ts(v) = \text{numer w kolejności
+topologicznej\;}v$.
+
+Przechodzimy po kolejnych krawędziach spośród $e_1 \dd e_k$. Rozpatrując
+krawędź $e_i=uv$ do struktury dodajemy krawędzie $u'v'$ takie, że $ts(u') <
+ts(u)$ oraz wyrzucamy wszystkie krawędzie $u'v'$ takie, że
+$ts(v') < ts(v)$. Robimy to w zamortyzowanym czasie $\mathcal{O}(m
+\log m)$, za pomocą dwóch wskaźników na tablicach $E_u$ i $E_v$. Po tych
+operacjach struktura zawiera wszystkie krawędzie przechodzące „dookoła''
+krawędzi $uv$. Następnie kopiujemy wartości tablic $\delta_{G}(s,w),
+\delta_{G^T}(t,w)$ dla każdego $w$ takiego, że $ts(u) < ts(w) <
+ts(v)$, Potem je zerujemy i obliczamy nie uwzględniając krawędzi $e_i$ (jak w
+zwykłym dynamiku do obliczania odległości w DAGu).
+\[
+\delta_{G-e_i}(s,t) =
+\min \left\{
+    \begin{array}{l}
+        \displaystyle \min \big\{ \delta_{G}(s,u') + w(u'v') + \delta_{G^T}(t,v') \;\big|\; ts(u') < ts(u) \land ts(v) < ts(v') \big\}, \\[1.2em]
+        \displaystyle \min \big\{ \delta_{G}(s,w) + \delta_{G^T}(t,w) \;\big|\; ts(u) < ts(w) < ts(v) \big\}
+    \end{array}
+\right.
+\]
+Pierwszy element obliczamy w $\mathcal{O}(\log m)$ wykonując zapytanie do
+struktury, drugi obliczamy w $\mathcal{O}(|\{ w \big| ts(u) < ts(w) < ts(v)\}|)$.
+Po obliczeniu przywracamy skopiowane wartości $\delta_G$ i $\delta_{G^T}$.
+Nietrudno zauważyć, że żaden wierzchołek $w$ się nie powtórzy, gdyż gdyby się
+powtórzył, to graf nie byłby DAGiem. To natomiast oznacza cały algorytm działa
+w zamortyzowanym czasie $\quasiLinear{n+m}$.
+
+\end{document}

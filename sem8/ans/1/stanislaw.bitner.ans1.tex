@@ -1,0 +1,139 @@
+\documentclass[11pt]{article}
+
+\usepackage[polish]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}                       % matma
+\usepackage{amsfonts,amsmath,amssymb,amsthm} % matma
+\usepackage{braket}
+\usepackage{tikz}
+\usepackage[margin=1in]{geometry}
+
+\newcommand{\dd}{\mathinner{{\ldotp}{\ldotp}}}
+
+\title{Algorytmy Najkrótszych ścieżek -- Praca Domowa 1}
+\author{Stanisław Bitner}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{}
+
+\begin{align*}
+    E_{\pi_1} \cap E_{\pi_2}
+    &=
+    \{
+        e \big|
+        w(e) + \pi_1(u) - \pi_1(v) \ge 0
+        \land
+        w(e) + \pi_2(u) - \pi_2(v) \ge 0
+    \}
+    \\
+    E_{\min(\pi_1,\pi_2)} \cap E_{\max(\pi_1,\pi_2)}
+    &=
+    \{
+        e \big|
+        w(e) + \min(\pi_1(u),\pi_2(u)) - \min(\pi_1(v),\pi_2(v)) \ge 0
+        \\&\;\;\;\;\;\land
+        w(e) + \max(\pi_1(u),\pi_2(u)) - \max(\pi_1(v),\pi_2(v)) \ge 0
+    \}
+\end{align*}
+
+Pokażemy, że każda krawędź $e := uv$ z pierwszego zbioru należy do drugiego
+zbioru.\\
+Niech $a = \pi_1(u), b = \pi_1(v), c = \pi_2(u), d = \pi_2(v)$.\\
+Bez straty ogólności mamy $2$ przypadki:
+
+\subsubsection*{\center{$a \le c \land b \le d$}}
+
+\begin{align*}
+    w(e) + \min(\pi_1(u),\pi_2(u)) - \min(\pi_1(v),\pi_2(v)) &= w(e) + a - b \ge 0\\
+    w(e) + \max(\pi_1(u),\pi_2(u)) - \max(\pi_1(v),\pi_2(v)) &= w(e) + c - d \ge 0
+\end{align*}
+
+\subsubsection*{\center{$a \le c \land b \ge d$}}
+
+\begin{align*}
+    w(e) + \min(\pi_1(u),\pi_2(u)) - \min(\pi_1(v),\pi_2(v)) &= w(e) + a - d \ge w(e) + a - b \ge 0\\
+    w(e) + \max(\pi_1(u),\pi_2(u)) - \max(\pi_1(v),\pi_2(v)) &= w(e) + c - b \ge w(e) + a - b \ge 0
+\end{align*}
+
+Zatem we wszystkich przypadkach warunki są spełnione i co za tym idzie, każda
+krawędź należąca do pierwszego zbioru należy też do drugiego zbioru.
+\qed
+
+\section{}
+
+\subsection*{(a)}
+
+Odpalamy dfs i wyznaczamy graf złożony jedynie z wierzchołków i krawędzi
+osiągalnych z $s$. Toposortujemy wierzchołki otrzymanego podgrafu.
+Iterujemy się po kolejnych wierzchołkach i do wyniku dokładamy najlżejszą
+krawędź wchodzącą do danego wierzchołka.
+
+Algorytm można udowodnić indukcyjnie. Baza indukcyjna działa, bo dla
+wierzchołka $s$ nie mamy w wyniku żadnej krawędzi i mamy wagę $0$, czyli dobrą
+wagę.
+
+Przypuśćmy, że obliczyliśmy podgraf do $i$-tego wierzchołka (w kolejności
+topologicznej). Chcemy dołożyć wierzchołek $v$. Żaby $v$ był osiągalny, to
+trzeba do niego poprowadzić krawędź, więc prowadzimy najlżejszą. Wcześniejszego
+podgrafu nie chcemy zmieniać, ponieważ jeśli usuniemy z niego dowolną krawędź,
+to musimy połączyć odcięty wierzchołek $u$ inną krawędzią. Wiemy, że z $v$ nie
+idzie krawędź do $u$, bo graf jest acykliczny i przeglądamy wierzchołki w
+kolejności topologicznej. Jeśli zaś poprowadzimy do niego inną krawędź z
+wcześniejszego wierzchołka i waga by się zmniejszyła, to oznaczałoby, że
+podgraf przed dodaniem $v$ nie miał optymalnej wagi, co jest sprzeczne z
+założeniem. Co więcej $v$ będzie osiągalny z $s$, gdyż każdy wcześniejszy
+wierzchołek był osiągalny z $s$.
+
+Zatem na mocy indukcji matematycznej algorytm poprawnie wyznacza $s$-kompletny
+podgraf o najmniejszej wadze. Złożoność algorytmu to oczywiście
+$\mathcal{O}(n+m)$.
+
+\subsection*{(b)}
+
+\section{}
+
+W zadaniu trzecim dla ścieżki $P=e_1e_2 \dd e_k$ $c(P) = \sum_{i=1}^{k-1} \min
+(w(e_i), w(e_{i+1})$. Zauważmy, że jeśli zamiast funkcji $\min$ moglibyśmy użyć
+dowolnej funkcji $f : \mathbb{R}^2 \rightarrow \mathbb{R}$ takiej, że $f(a,b)
+\in \{a,b\}$, to koszty ścieżek byłyby takie same jak przy użyciu funkcji
+$\min$. Okazuje się, że wejściowy graf $G$ można w liniowym czasie
+przetransformować na graf $G'$, który spełnia następującą zależność: $c(s,t) =
+\min(\delta_{G'}(s_0,t_1), \delta_{G'}(s_0,t_0))$. Graf $G'$ otrzymujemy w
+następujący sposób:
+\begin{itemize}
+    \item z każdego wierzchołka $v \in V_G$ tworzymy wierzchołki $v_1$ i $v_0$;
+    \item z każdej krawędzi $e_i=uv \in E_G$ tworzymy wierzchołek $v_{e_i}$;
+    \item z każdej krawędzi $e_i = uv \in E_G$ tworzymy krawędź $u_1v_{e_i}$ o wadze $w(e_i)$;
+    \item z każdej krawędzi $e_i = uv \in E_G$ tworzymy krawędź $u_0v_{e_i}$ o wadze $0$;
+    \item z każdej krawędzi $e_i = uv \in E_G$ tworzymy krawędź $v_{e_i}v_1$ o wadze $0$;
+    \item z każdej krawędzi $e_i = uv \in E_G$ tworzymy krawędź $v_{e_i}v_0$ o wadze $w(e_i)$;
+\end{itemize}
+
+\begin{tikzpicture}[every node/.style={font=\small}]
+    \node (u) at (1,3) {$u$};
+    \node (v) at (3,3) {$v$};
+    \draw[->] (u) -- node[above] {$e_1$} (v);
+
+    \node (u1) at (0,1) {$u_1$};
+    \node (u0) at (0,0) {$u_0$};
+    \node (v1) at (4,1) {$v_1$};
+    \node (v0) at (4,0) {$v_0$};
+    \node (ve1) at (2, 0.5) {$v_{e_1}$};
+    \draw[->] (u1)  -- node[above] {$e_1$} (ve1);
+    \draw[->] (u0)  -- node[below] {$0$} (ve1);
+    \draw[->] (ve1) -- node[above] {$0$} (v1);
+    \draw[->] (ve1) -- node[below] {$e_1$} (v0);
+
+    \draw[->, gray, double] (2,2.3) -- (2,1.7);
+\end{tikzpicture}
+
+Po takiej transformacji otrzymujemy graf $G'$ o $2n+m$ wierzchołkach i $4m$
+krawędziach. Następnie odpalamy zwykły algorytm Dijkstry z wierzchołka $s_0$.\\
+Koszty ścieżek $c(s,t)=\min(\delta_{G'}(s_0, t_0),\delta_{G'}(s_0, t_1)$.\\
+Wszystkie odległości wyliczamy w $\mathcal{O}((n+m) \log (n+m))$.
+
+\end{document}
