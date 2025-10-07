@@ -1,0 +1,7 @@
+.cache
+compile_commands.json
+doc/checker.tgz
+doc/checker/
+tester/tests
+tester/generate
+tester/x.sh

@@ -1,0 +1,14 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-O3",
+      "-c",
+      "-Wall",
+      "-I/usr/include",
+      "hello-world-seq.c"
+    ],
+    "directory": "/home/rentib/misc/Studia/sem8/hpc/lab/mpi/1",
+    "file": "/home/rentib/misc/Studia/sem8/hpc/lab/mpi/1/hello-world-seq.c"
+  }
+]
